@@ -16,7 +16,7 @@ EditURL = "../../examples/README.jl"
 ```julia
 julia> using Pkg: Pkg
 
-julia> Pkg.add("https://github.com/ITensor/{PKGNAME}.jl")
+julia> Pkg.add("https://github.com/ITensor/ITensorPkgSkeleton.jl")
 ```
 
 ## Examples

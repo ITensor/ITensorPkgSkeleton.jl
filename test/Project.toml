@@ -1,4 +1,5 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+Git_jll = "f8c6e375-362e-5223-8a59-34ff63f689eb"
 ITensorPkgSkeleton = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

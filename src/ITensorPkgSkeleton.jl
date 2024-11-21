@@ -42,9 +42,15 @@ function change_branch_name(path, branch_name)
   return nothing
 end
 
-function generate(pkg_name)
-  # TODO: Use `joinpath(first(DEPOT_PATH), "dev", pkg_name)`?
-  pkg_path = joinpath(homedir(), ".julia", "dev", pkg_name)
+function default_path()
+  # TODO: Use something like `joinpath(first(DEPOT_PATH), "dev", pkg_name)`
+  # to make it more general.
+  return joinpath(homedir(), ".julia", "dev")
+end
+
+function generate(pkg_name; path=default_path())
+  pkg_path = joinpath(path, pkg_name)
+  # TODO: Turn this into a keyword argument.
   template_dir = joinpath(pkgdir(ITensorPkgSkeleton), "templates", "default")
 
   branch_name = default_branch_name()

@@ -1,8 +1,8 @@
 @eval module $(gensym())
-using ITensorPkgSkeleton: ITensorPkgSkeleton
+using {PKGNAME}: {PKGNAME}
 using Test: @testset
 
-@testset "ITensorPkgSkeleton.jl" begin
+@testset "{PKGNAME}.jl" begin
   filenames = filter(readdir(@__DIR__)) do f
     startswith("test_")(f) && endswith(".jl")(f)
   end

@@ -1,5 +1,5 @@
-name = "ITensorPkgSkeleton"
-uuid = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
+name = "{PKGNAME}"
+uuid = "{UUID}"
 authors = ["ITensor developers <support@itensor.org> and contributors"]
 version = "0.1.0"
 

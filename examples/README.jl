@@ -26,6 +26,8 @@ ITensorPkgSkeleton.use_system_git!()
 # If `path` isn't specified, it defaults to `~/.julia/dev`.
 ITensorPkgSkeleton.generate("NewPkg"; path=tempdir())
 
+1 + 1
+
 # You can generate this README with:
 #=
 ```julia

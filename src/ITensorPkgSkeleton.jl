@@ -61,11 +61,7 @@ function generate(pkg_name; path=default_path())
     "USERNAME" => "ITensor developers",
     "USEREMAIL" => "support@itensor.org",
   ])
-  PkgSkeleton.generate(
-    pkg_path;
-    templates=[template_dir],
-    user_replacements,
-  )
+  PkgSkeleton.generate(pkg_path; templates=[template_dir], user_replacements)
 
   # Change the default branch.
   change_branch_name(pkg_path, branch_name)

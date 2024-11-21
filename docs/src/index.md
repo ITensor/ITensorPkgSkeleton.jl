@@ -36,6 +36,8 @@ If `path` isn't specified, it defaults to `~/.julia/dev`.
 
 ````@example index
 ITensorPkgSkeleton.generate("NewPkg"; path=tempdir())
+
+1 + 1
 ````
 
 You can generate this README with:

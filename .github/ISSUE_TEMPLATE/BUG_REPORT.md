@@ -1,8 +1,8 @@
 ---
 name: ITensorPkgSkeleton.jl bug report
 about: Create a bug report to help us improve ITensorPkgSkeleton.jl
-title: "[ITensorPkgSkeleton] [BUG] YOUR SHORT DESCRIPTION OF THE BUG HERE"
-labels: ["ITensorPkgSkeleton", "bug"]
+title: "[BUG] YOUR SHORT DESCRIPTION OF THE BUG HERE"
+labels: ["bug"]
 assignees: ''
 
 ---

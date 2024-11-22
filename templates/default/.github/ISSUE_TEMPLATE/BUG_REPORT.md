@@ -1,8 +1,8 @@
 ---
 name: {PKGNAME}.jl bug report
 about: Create a bug report to help us improve {PKGNAME}.jl
-title: "[{PKGNAME}] [BUG] YOUR SHORT DESCRIPTION OF THE BUG HERE"
-labels: ["{PKGNAME}", "bug"]
+title: "[BUG] YOUR SHORT DESCRIPTION OF THE BUG HERE"
+labels: ["bug"]
 assignees: ''
 
 ---

@@ -1,8 +1,8 @@
 ---
-name: {PKGNAME}.jl feature request
-about: Suggest an idea for {PKGNAME}.jl
-title: "[{PKGNAME}] [ENHANCEMENT] YOUR SHORT DESCRIPTION OF THE FEATURE REQUEST HERE"
-labels: ["{PKGNAME}", "enhancement"]
+name: ITensorPkgSkeleton.jl feature request
+about: Suggest an idea for ITensorPkgSkeleton.jl
+title: "[ENHANCEMENT] YOUR SHORT DESCRIPTION OF THE FEATURE REQUEST HERE"
+labels: ["enhancement"]
 assignees: ''
 
 ---

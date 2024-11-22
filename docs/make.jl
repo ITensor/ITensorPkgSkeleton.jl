@@ -17,4 +17,6 @@ makedocs(;
   pages=["Home" => "index.md"],
 )
 
-deploydocs(; repo="github.com/ITensor/ITensorPkgSkeleton.jl", devbranch="main")
+deploydocs(;
+  repo="github.com/ITensor/ITensorPkgSkeleton.jl", devbranch="main", push_preview=true
+)

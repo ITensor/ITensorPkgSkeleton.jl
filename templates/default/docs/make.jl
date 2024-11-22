@@ -13,4 +13,6 @@ makedocs(;
   pages=["Home" => "index.md"],
 )
 
-deploydocs(; repo="github.com/ITensor/{PKGNAME}.jl", devbranch="main")
+deploydocs(;
+  repo="github.com/ITensor/{PKGNAME}.jl", devbranch="main", push_preview=true
+)

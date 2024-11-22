@@ -1,13 +1,14 @@
 module ITensorPkgSkeleton
 
 using Git: git
-using Git_jll: Git_jll
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
 
 # Configure `Git.jl`/`Git_jll.jl` to
 # use the local installation of git.
 using Preferences: Preferences
+# Need to load to set the preferences.
+using Git_jll: Git_jll
 function use_system_git!()
   git_path = try
     readchomp(`which git`)
@@ -17,6 +18,7 @@ function use_system_git!()
   if !isnothing(git_path)
     Preferences.set_preferences!("Git_jll", "git_path" => git_path)
   end
+  return nothing
 end
 
 # Get the default branch name.
@@ -48,9 +50,7 @@ function default_path()
   return joinpath(homedir(), ".julia", "dev")
 end
 
-function default_templates()
-  return [joinpath(pkgdir(ITensorPkgSkeleton), "templates", "default")]
-end
+default_templates() = ["default"]
 
 default_user() = "ITensor"
 
@@ -88,7 +88,7 @@ function format_downstream_pkgs(user_replacements)
   return merge(user_replacements, (; DOWNSTREAMPKGS))
 end
 
-function set_default_path(template)
+function set_default_template_path(template)
   isabspath(template) && return template
   return joinpath(pkgdir(ITensorPkgSkeleton), "templates", template)
 end
@@ -99,7 +99,7 @@ function generate(
   # Set default values.
   user_replacements = merge(default_user_replacements(), user_replacements)
   # Fill in default path if missing.
-  templates = set_default_path.(templates)
+  templates = set_default_template_path.(templates)
   # Process downstream package information.
   user_replacements = format_downstream_pkgs(user_replacements)
   pkg_path = joinpath(path, pkg_name)

@@ -13,10 +13,9 @@ EditURL = "../../examples/README.jl"
 
 ## Installation instructions
 
-```julia
-julia> using Pkg: Pkg
-
-julia> Pkg.add("https://github.com/ITensor/{PKGNAME}.jl")
+```@repl
+using Pkg: Pkg
+Pkg.add("https://github.com/ITensor/{PKGNAME}.jl")
 ```
 
 ## Examples
@@ -28,7 +27,7 @@ using {PKGNAME}: {PKGNAME}
 Show examples of using {PKGNAME}.jl
 
 You can generate this README with:
-```julia
+```@example
 using Literate: Literate
 using {PKGNAME}: {PKGNAME}
 Literate.markdown(

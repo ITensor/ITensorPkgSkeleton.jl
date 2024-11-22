@@ -10,10 +10,9 @@
 # ## Installation instructions
 
 #=
-```julia
-julia> using Pkg: Pkg
-
-julia> Pkg.add("https://github.com/ITensor/{PKGNAME}.jl")
+```@repl
+using Pkg: Pkg
+Pkg.add("https://github.com/ITensor/{PKGNAME}.jl")
 ```
 =#
 
@@ -22,9 +21,11 @@ julia> Pkg.add("https://github.com/ITensor/{PKGNAME}.jl")
 using {PKGNAME}: {PKGNAME}
 # Show examples of using {PKGNAME}.jl
 
+# ## Generating this page
+
 # You can generate this README with:
 #=
-```julia
+```@example
 using Literate: Literate
 using {PKGNAME}: {PKGNAME}
 Literate.markdown(

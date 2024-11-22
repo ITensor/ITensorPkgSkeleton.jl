@@ -10,10 +10,9 @@
 # ## Installation instructions
 
 #=
-```julia
-julia> using Pkg: Pkg
-
-julia> Pkg.add("https://github.com/ITensor/ITensorPkgSkeleton.jl")
+```@repl
+using Pkg: Pkg
+Pkg.add("https://github.com/ITensor/ITensorPkgSkeleton.jl")
 ```
 =#
 
@@ -26,9 +25,11 @@ ITensorPkgSkeleton.use_system_git!()
 # If `path` isn't specified, it defaults to `~/.julia/dev`.
 ITensorPkgSkeleton.generate("NewPkg"; path=tempdir())
 
-# You can generate this README with:
+# ## Generating this page
+
+# You can generate this page with:
 #=
-```julia
+```@example
 using Literate: Literate
 using ITensorPkgSkeleton: ITensorPkgSkeleton
 Literate.markdown(

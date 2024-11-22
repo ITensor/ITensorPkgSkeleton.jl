@@ -24,7 +24,7 @@ using ITensorPkgSkeleton: ITensorPkgSkeleton
 # the version of git installed by `Git.jl`.
 ITensorPkgSkeleton.use_system_git!()
 # If `path` isn't specified, it defaults to `~/.julia/dev`.
-ITensorPkgSkeleton.generate("NewPkg"; path=tempdir())
+ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir())
 
 # You can generate this README with:
 #=

@@ -17,7 +17,7 @@ jobs:
       - name: Install Literate and generate docs
         run: |
           julia  -e 'using Pkg; Pkg.add(PackageSpec(name="Literate"))'
-          julia  -e 'using Literate; Literate.markdown("examples/README.jl", "docs/src"; flavor=Literate.DocumenterFlavor(), name="index")'
+          julia  -e 'include("make_readme.jl")'
       - name: Check if docs need to be updated
         run: |
           julia -e '

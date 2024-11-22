@@ -38,18 +38,6 @@ If `path` isn't specified, it defaults to `~/.julia/dev`.
 ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir())
 ````
 
-You can generate this README with:
-```julia
-using Literate: Literate
-using ITensorPkgSkeleton: ITensorPkgSkeleton
-Literate.markdown(
-  joinpath(pkgdir(ITensorPkgSkeleton), "examples", "README.jl"),
-  joinpath(pkgdir(ITensorPkgSkeleton), "docs", "src");
-  flavor=Literate.DocumenterFlavor(),
-  name="index",
-)
-```
-
 ---
 
 *This page was generated using [Literate.jl](https://github.com/fredrikekre/Literate.jl).*

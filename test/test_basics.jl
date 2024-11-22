@@ -3,7 +3,16 @@ using ITensorPkgSkeleton: ITensorPkgSkeleton
 using Test: @test, @testset
 
 @testset "ITensorPkgSkeleton" begin
-  pkgdirs = [".github", "benchmark", "docs", "src", "test"]
+  pkgdirs = [
+    ".github",
+    ".github/ISSUE_TEMPLATE",
+    ".github/workflows",
+    "benchmark",
+    "docs",
+    "examples",
+    "src",
+    "test",
+  ]
   @testset "generate" begin
     path = mktempdir()
     ITensorPkgSkeleton.generate("NewPkg"; path)

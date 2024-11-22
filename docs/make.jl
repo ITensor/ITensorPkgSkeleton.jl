@@ -1,5 +1,5 @@
 using ITensorPkgSkeleton: ITensorPkgSkeleton
-using Documenter: deploydocs, makedocs
+using Documenter: Documenter, DocMeta, deploydocs, makedocs
 
 DocMeta.setdocmeta!(
   ITensorPkgSkeleton, :DocTestSetup, :(using ITensorPkgSkeleton); recursive=true

@@ -16,7 +16,11 @@ jobs:
           version: 1
       - name: Install Literate and generate docs
         run: |
-          julia  -e 'using Pkg; Pkg.add(PackageSpec(name="Literate")); Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+          julia  -e '
+          using Pkg
+          Pkg.develop(PackageSpec(path=pwd()))
+          Pkg.instantiate()
+          Pkg.add(PackageSpec(name="Literate"))'
           julia  -e 'include("make_readme.jl")'
       - name: Check if docs need to be updated
         run: |

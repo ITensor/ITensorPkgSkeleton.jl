@@ -29,7 +29,7 @@ using Test: @test, @testset
         path = mktempdir()
         templates = ["default", "downstream"]
         ITensorPkgSkeleton.generate(
-          "NewPkg"; path, templates, user_replacements=(; DOWNSTREAMPKGS=("DownstreamPkg",))
+          "NewPkg"; path, templates, user_replacements=(; DOWNSTREAMPKGS)
         )
         @test isdir(joinpath(path, "NewPkg"))
         @test isdir(joinpath(path, "NewPkg", ".github", "workflows"))

@@ -29,7 +29,7 @@ jobs:
           if out == ""
               exit(0)
           else
-              @error "The documentation is outdated, rerun Literate to regenerate them."
+              @error "The docs are outdated, rerun Literate to regenerate them."
               write(stdout, out)
               out_diff = Cmd(`git diff`) |> read |> String
               @error "Diff:"

@@ -16,8 +16,12 @@ jobs:
           version: 1
       - name: Install Literate and generate docs
         run: |
-          julia  -e 'using Pkg; Pkg.add(PackageSpec(name="Literate"))'
-          julia  -e 'using Literate; Literate.markdown("examples/README.jl", "docs/src"; flavor=Literate.DocumenterFlavor(), name="index")'
+          julia  -e '
+          using Pkg
+          Pkg.develop(PackageSpec(path=pwd()))
+          Pkg.instantiate()
+          Pkg.add(PackageSpec(name="Literate"))'
+          julia  -e 'include("make_readme.jl")'
       - name: Check if docs need to be updated
         run: |
           julia -e '
@@ -25,7 +29,7 @@ jobs:
           if out == ""
               exit(0)
           else
-              @error "The documentation is outdated, rerun Literate to regenerate them."
+              @error "The docs are outdated, rerun Literate to regenerate them."
               write(stdout, out)
               out_diff = Cmd(`git diff`) |> read |> String
               @error "Diff:"

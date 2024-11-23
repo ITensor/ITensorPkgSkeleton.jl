@@ -1,3 +1,5 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-{PKGNAME} = "70ffe8f8-8519-465d-b12c-3b7d28f4e5e2"
+Git_jll = "f8c6e375-362e-5223-8a59-34ff63f689eb"
+{PKGNAME} = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
+Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"

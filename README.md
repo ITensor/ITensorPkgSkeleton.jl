@@ -32,7 +32,6 @@ If `path` isn't specified, it defaults to `~/.julia/dev`.
 
 ````julia
 ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir())
-1 + 1
 ````
 
 ---

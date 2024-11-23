@@ -20,18 +20,8 @@ julia> Pkg.add("https://github.com/ITensor/{PKGNAME}.jl")
 # ## Examples
 
 using {PKGNAME}: {PKGNAME}
-# Show examples of using {PKGNAME}.jl
-
-# You can generate this README with:
-#=
-```julia
-using Literate: Literate
-using {PKGNAME}: {PKGNAME}
-Literate.markdown(
-  joinpath(pkgdir({PKGNAME}), "examples", "README.jl"),
-  joinpath(pkgdir({PKGNAME}), "docs", "src");
-  flavor=Literate.DocumenterFlavor(),
-  name="index",
-)
-```
-=#
+# This step might be required to circumvent issues with
+# the version of git installed by `Git.jl`.
+{PKGNAME}.use_system_git!()
+# If `path` isn't specified, it defaults to `~/.julia/dev`.
+{PKGNAME}.generate("NewPkg"; path=mktempdir())

@@ -95,7 +95,8 @@ function set_default_template_path(template)
 end
 
 function is_git_repo(path)
-  return try LibGit2.GitRepo(path)
+  return try
+    LibGit2.GitRepo(path)
     return true
   catch
     return false

@@ -112,7 +112,7 @@ function generate(
   # Process downstream package information.
   user_replacements = format_downstream_pkgs(user_replacements)
   pkg_path = joinpath(path, pkg_name)
-  is_new_repo = !is_git_repo(path)
+  is_new_repo = !is_git_repo(pkg_path)
   branch_name = default_branch_name()
   user_replacements_dict = Dict(keys(user_replacements) .=> values(user_replacements))
   PkgSkeleton.generate(pkg_path; templates, user_replacements=user_replacements_dict)

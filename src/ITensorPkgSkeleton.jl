@@ -1,6 +1,7 @@
 module ITensorPkgSkeleton
 
 using Git: git
+using LibGit2: LibGit2
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
 
@@ -93,6 +94,14 @@ function set_default_template_path(template)
   return joinpath(pkgdir(ITensorPkgSkeleton), "templates", template)
 end
 
+function is_git_repo(path)
+  return try LibGit2.GitRepo(path)
+    return true
+  catch
+    return false
+  end
+end
+
 function generate(
   pkg_name; path=default_path(), templates=default_templates(), user_replacements=(;)
 )
@@ -103,11 +112,14 @@ function generate(
   # Process downstream package information.
   user_replacements = format_downstream_pkgs(user_replacements)
   pkg_path = joinpath(path, pkg_name)
+  is_new_repo = !is_git_repo(path)
   branch_name = default_branch_name()
   user_replacements_dict = Dict(keys(user_replacements) .=> values(user_replacements))
   PkgSkeleton.generate(pkg_path; templates, user_replacements=user_replacements_dict)
-  # Change the default branch.
-  change_branch_name(pkg_path, branch_name)
+  if is_new_repo
+    # Change the default branch if this is a new repository.
+    change_branch_name(pkg_path, branch_name)
+  end
   return nothing
 end
 

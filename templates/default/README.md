@@ -21,18 +21,7 @@ julia> Pkg.add("https://github.com/ITensor/{PKGNAME}.jl")
 using {PKGNAME}: {PKGNAME}
 ````
 
-This step might be required to circumvent issues with
-the version of git installed by `Git.jl`.
-
-````julia
-{PKGNAME}.use_system_git!()
-````
-
-If `path` isn't specified, it defaults to `~/.julia/dev`.
-
-````julia
-{PKGNAME}.generate("NewPkg"; path=mktempdir())
-````
+Examples go here.
 
 ---
 

@@ -20,18 +20,5 @@ julia> Pkg.add("https://github.com/ITensor/{PKGNAME}.jl")
 # ## Examples
 
 using {PKGNAME}: {PKGNAME}
-# Show examples of using {PKGNAME}.jl
+# Examples go here.
 
-# You can generate this README with:
-#=
-```julia
-using Literate: Literate
-using {PKGNAME}: {PKGNAME}
-Literate.markdown(
-  joinpath(pkgdir({PKGNAME}), "examples", "README.jl"),
-  joinpath(pkgdir({PKGNAME}), "docs", "src");
-  flavor=Literate.DocumenterFlavor(),
-  name="index",
-)
-```
-=#

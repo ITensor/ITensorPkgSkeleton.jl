@@ -34,7 +34,6 @@ using Test: @test, @testset
         ) do io
           return contains(read(io, String), "- {user: ITensor, repo: DownstreamPkg.jl}")
         end
-        @show templates
         for dir in setdiff(pkgdirs, [".github", ".github/workflows"])
           @test isdir(joinpath(path, "NewPkg", dir)) == !isempty(templates)
         end

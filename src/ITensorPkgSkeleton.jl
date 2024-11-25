@@ -12,6 +12,7 @@ using Git: git
 using LibGit2: LibGit2
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
+using Suppressor: @suppress
 
 # Configure `Git.jl`/`Git_jll.jl` to
 # use the local installation of git.
@@ -57,8 +58,10 @@ function set_remote_url(path, pkgname, ghuser)
   url = "git@github.com:$ghuser/$pkgname.jl.git"
   cd(joinpath(path, pkgname)) do
     try
-      run(`$(git()) ls-remote -h "$url" HEAD $("&>") /dev/null`)
-      run(`$(git()) add origin $url`)
+      @suppress begin
+        run(`$(git()) ls-remote -h "$url" HEAD $("&>") /dev/null`)
+        run(`$(git()) add origin $url`)
+      end
     catch
     end
     return nothing
@@ -76,7 +79,9 @@ default_username() = "ITensor developers"
 default_useremail() = "support@itensor.org"
 
 function default_user_replacements()
-  return (ghuser=default_ghuser(), username=default_username(), useremail=default_useremail())
+  return (
+    ghuser=default_ghuser(), username=default_username(), useremail=default_useremail()
+  )
 end
 
 # See:
@@ -179,21 +184,21 @@ julia> using ITensorPkgSkeleton: ITensorPkgSkeleton;
 
 julia> ITensorPkgSkeleton.generate("NewPkg");
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mkdtempdir());
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir());
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; templates=ITensorPkgSkeleton.default_templates());
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), templates=ITensorPkgSkeleton.default_templates());
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; templates=["github"]);
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), templates=["github"]);
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; templates=["src", "github"]);
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), templates=["src", "github"]);
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; ignore_templates=["src", "github"]);
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), ignore_templates=["src", "github"]);
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; ghuser="MyOrg");
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), ghuser="MyOrg");
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; downstreampkgs=["ITensors", "ITensorMPS"]);
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), downstreampkgs=["ITensors", "ITensorMPS"]);
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; downstreampkgs=[(user="ITensor", repo="ITensors")]);
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), downstreampkgs=[(user="ITensor", repo="ITensors")]);
 ```
 
 # Arguments
@@ -230,10 +235,9 @@ function generate(
   is_new_repo = !is_git_repo(pkgpath)
   branch_name = default_branch_name()
   user_replacements_pkgskeleton = to_pkgskeleton(user_replacements)
-
-  @show user_replacements_pkgskeleton
-
-  PkgSkeleton.generate(pkgpath; templates, user_replacements=user_replacements_pkgskeleton)
+  @suppress PkgSkeleton.generate(
+    pkgpath; templates, user_replacements=user_replacements_pkgskeleton
+  )
   if is_new_repo
     # Change the default branch if this is a new repository.
     change_branch_name(pkgpath, branch_name)

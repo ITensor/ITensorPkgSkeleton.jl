@@ -73,10 +73,10 @@ end
 
 default_ghuser() = "ITensor"
 default_username() = "ITensor developers"
-default_usermail() = "support@itensor.org"
+default_useremail() = "support@itensor.org"
 
 function default_user_replacements()
-  return (ghuser=default_ghuser(), username=default_username(), usermail=default_usermail())
+  return (ghuser=default_ghuser(), username=default_username(), useremail=default_useremail())
 end
 
 # See:
@@ -230,6 +230,9 @@ function generate(
   is_new_repo = !is_git_repo(pkgpath)
   branch_name = default_branch_name()
   user_replacements_pkgskeleton = to_pkgskeleton(user_replacements)
+
+  @show user_replacements_pkgskeleton
+
   PkgSkeleton.generate(pkgpath; templates, user_replacements=user_replacements_pkgskeleton)
   if is_new_repo
     # Change the default branch if this is a new repository.

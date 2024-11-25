@@ -1,8 +1,11 @@
 module ITensorPkgSkeleton
 
-## @static if Base.VERSION >= v"1.11.0-DEV.469"
-##   public generate
-## end
+# Declare `ITensorPkgSkeleton.generate` as public in a
+# backwards-compatible way.
+# See: https://discourse.julialang.org/t/is-compat-jl-worth-it-for-the-public-keyword/119041
+if VERSION >= v"1.11.0-DEV.469"
+  eval(Meta.parse("public all_templates, default_templates, generate"))
+end
 
 using DocStringExtensions: SIGNATURES
 using Git: git
@@ -129,6 +132,11 @@ function is_git_repo(path)
   end
 end
 
+"""
+$(SIGNATURES)
+
+All available templates when constructing a package. Includes the following templates: $(all_templates())
+"""
 function all_templates()
   return [
     "benchmark",
@@ -145,6 +153,11 @@ function all_templates()
   ]
 end
 
+"""
+$(SIGNATURES)
+
+Default templates when constructing a package. Includes the following templates: $(default_templates())
+"""
 default_templates() = all_templates()
 
 function to_pkgskeleton(user_replacements)
@@ -168,7 +181,7 @@ julia> ITensorPkgSkeleton.generate("NewPkg");
 
 julia> ITensorPkgSkeleton.generate("NewPkg"; path=mkdtempdir());
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; templates=ITensorPkgSkeleton.all_templates());
+julia> ITensorPkgSkeleton.generate("NewPkg"; templates=ITensorPkgSkeleton.default_templates());
 
 julia> ITensorPkgSkeleton.generate("NewPkg"; templates=["github"]);
 
@@ -190,7 +203,7 @@ julia> ITensorPkgSkeleton.generate("NewPkg"; downstreampkgs=[(user="ITensor", re
 # Keywords
 
 - `path::AbstractString`: Path where the package will be generated. Defaults to the [development directory](https://pkgdocs.julialang.org/v1/api/#Pkg.develop), i.e. `$(default_path())`.
-- `templates`: A list of templates to use. Select a subset of `$(all_templates())`. Defaults to `$(default_templates())`.
+- `templates`: A list of templates to use. Select a subset of `ITensorPkgSkeleton.all_templates() = $(all_templates())`. Defaults to `ITensorPkgSkeleton.default_templates() = $(default_templates())`.
 - `ignore_templates`: A list of templates to ignore. This is the same as setting `templates=setdiff(templates, ignore_templates)`.
 - `downstreampkgs`: Specify the downstream packages that depend on this package. Setting this will create a workflow where the downstream tests will be run alongside the tests for this package in Github Actions to ensure that changes to your package don't break the specified downstream packages. Specify it as a list of packages, for example `["DownstreamPkg1", "DownstreamPkg2"]`, which assumes the packages are in the `$(default_ghuser())` organization. Alternatively, specify the organization with `[(user="Org1", repo="DownstreamPkg1"), (user="Org2", repo="DownstreamPkg2")]`; . Defaults to an empty list.
 - `uuid`: Replaces `{UUID}` in the template. Defaults to the existing UUID in the `Project.toml` if the path points to an existing package, otherwise generates one randomly with `UUIDs.uuid4()`.

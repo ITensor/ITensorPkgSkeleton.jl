@@ -13,4 +13,5 @@
 Manifest.toml
 benchmark/*.json
 docs/build/
+examples/LocalPreferences.toml
 test/LocalPreferences.toml

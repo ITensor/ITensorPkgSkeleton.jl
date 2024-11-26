@@ -7,10 +7,8 @@
 .benchmarkci
 .tmp
 .vscode/
-/docs/Manifest.toml
-/docs/build/
-/docs/src/index.md
 Manifest.toml
 benchmark/*.json
+docs/Manifest.toml
 docs/build/
-test/LocalPreferences.toml
+docs/src/index.md

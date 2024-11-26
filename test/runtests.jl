@@ -1,5 +1,4 @@
 @eval module $(gensym())
-using ITensorPkgSkeleton: ITensorPkgSkeleton
 using Test: @testset
 
 @testset "ITensorPkgSkeleton.jl" begin

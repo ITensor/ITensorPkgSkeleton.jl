@@ -17,20 +17,17 @@ using Test: @test, @testset
     path = mktempdir()
     ITensorPkgSkeleton.generate("NewPkg"; path)
     @test isdir(joinpath(path, "NewPkg"))
+    @test isfile(joinpath(path, "NewPkg", "Project.toml"))
     for dir in pkgdirs
       @test isdir(joinpath(path, "NewPkg", dir))
     end
+    @test !isfile(joinpath(path, "NewPkg", ".github", "workflows", "Downstream.yml"))
   end
   @testset "generate with downstream tests" begin
-    for templates in (["downstream"], ["default", "downstream"])
-      for DOWNSTREAMPKGS in (
-        ("DownstreamPkg",), (repo="DownstreamPkg",), (user="ITensor", repo="DownstreamPkg")
-      )
+    for templates in (ITensorPkgSkeleton.default_templates(), [])
+      for downstreampkgs in (["DownstreamPkg"], [(user="ITensor", repo="DownstreamPkg")])
         path = mktempdir()
-        templates = ["default", "downstream"]
-        ITensorPkgSkeleton.generate(
-          "NewPkg"; path, templates, user_replacements=(; DOWNSTREAMPKGS)
-        )
+        ITensorPkgSkeleton.generate("NewPkg"; path, templates, downstreampkgs)
         @test isdir(joinpath(path, "NewPkg"))
         @test isdir(joinpath(path, "NewPkg", ".github", "workflows"))
         @test isfile(joinpath(path, "NewPkg", ".github", "workflows", "Downstream.yml"))
@@ -39,8 +36,8 @@ using Test: @test, @testset
         ) do io
           return contains(read(io, String), "- {user: ITensor, repo: DownstreamPkg.jl}")
         end
-        for dir in pkgdirs
-          @test isdir(joinpath(path, "NewPkg", dir)) == ("default" in templates)
+        for dir in setdiff(pkgdirs, [".github", ".github/workflows"])
+          @test isdir(joinpath(path, "NewPkg", dir)) == !isempty(templates)
         end
       end
     end

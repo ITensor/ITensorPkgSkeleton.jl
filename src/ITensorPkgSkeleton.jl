@@ -1,9 +1,18 @@
 module ITensorPkgSkeleton
 
+# Declare `ITensorPkgSkeleton.generate` as public in a
+# backwards-compatible way.
+# See: https://discourse.julialang.org/t/is-compat-jl-worth-it-for-the-public-keyword/119041
+if VERSION >= v"1.11.0-DEV.469"
+  eval(Meta.parse("public all_templates, default_templates, generate"))
+end
+
+using DocStringExtensions: SIGNATURES
 using Git: git
 using LibGit2: LibGit2
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
+using Suppressor: @suppress
 
 # Configure `Git.jl`/`Git_jll.jl` to
 # use the local installation of git.
@@ -37,56 +46,81 @@ function default_branch_name()
 end
 
 function change_branch_name(path, branch_name)
-  original_dir = pwd()
-  cd(path)
-  original_branch_name = readchomp(`$(git()) branch --show-current`)
-  run(`$(git()) branch -m $original_branch_name $branch_name`)
-  cd(original_dir)
+  cd(path) do
+    original_branch_name = readchomp(`$(git()) branch --show-current`)
+    run(`$(git()) branch -m $original_branch_name $branch_name`)
+    return nothing
+  end
   return nothing
 end
 
-function default_path()
-  # TODO: Use something like `joinpath(first(DEPOT_PATH), "dev", pkg_name)`
-  # to make it more general.
-  return joinpath(homedir(), ".julia", "dev")
+function set_remote_url(path, pkgname, ghuser)
+  url = "git@github.com:$ghuser/$pkgname.jl.git"
+  cd(joinpath(path, pkgname)) do
+    try
+      @suppress begin
+        run(`$(git()) ls-remote -h "$url" HEAD $("&>") /dev/null`)
+        run(`$(git()) add origin $url`)
+      end
+    catch
+    end
+    return nothing
+  end
+  return nothing
 end
 
-default_templates() = ["default"]
+# https://pkgdocs.julialang.org/v1/api/#Pkg.develop
+function default_path()
+  return joinpath(DEPOT_PATH[1], "dev")
+end
 
-default_user() = "ITensor"
+default_ghuser() = "ITensor"
+default_username() = "ITensor developers"
+default_useremail() = "support@itensor.org"
 
 function default_user_replacements()
   return (
-    GHUSER=default_user(), USERNAME="ITensor developers", USEREMAIL="support@itensor.org"
+    ghuser=default_ghuser(), username=default_username(), useremail=default_useremail()
   )
+end
+
+# See:
+# https://discourse.julialang.org/t/remove-a-field-from-a-namedtuple/34664
+# https://github.com/JuliaLang/julia/pull/55270
+# https://github.com/JuliaLang/julia/issues/34772
+function delete(nt::NamedTuple{names}, key::Symbol) where {names}
+  return NamedTuple{filter(≠(key), names)}(nt)
 end
 
 #=
 This processes inputs like:
 ```julia
-ITensorPkgSkeleton.generate("NewPkg"; user_replacements=(DOWNSTREAMPKGS=("ITensors",)))
-ITensorPkgSkeleton.generate("NewPkg"; user_replacements=(DOWNSTREAMPKGS=(repo="ITensors",)))
-ITensorPkgSkeleton.generate("NewPkg"; user_replacements=(DOWNSTREAMPKGS=(user="ITensor", repo="ITensors",)))
+ITensorPkgSkeleton.generate("NewPkg"; downstreampkgs=["ITensors"])
+ITensorPkgSkeleton.generate("NewPkg"; downstreampkgs=[(ghuser="ITensor", repo="ITensors")])
 ```
 =#
-function format_downstream_pkgs(user_replacements)
-  if !haskey(user_replacements, :DOWNSTREAMPKGS)
+function format_downstreampkgs(user_replacements)
+  if !haskey(user_replacements, :downstreampkgs)
     return user_replacements
   end
-  DOWNSTREAMPKGS = ""
-  for user_repo in user_replacements.DOWNSTREAMPKGS
-    user, repo = if user_repo isa AbstractString
+  if isempty(user_replacements.downstreampkgs)
+    return delete(user_replacements, :downstreampkgs)
+  end
+  downstreampkgs = ""
+  for ghuser_and_or_repo in user_replacements.downstreampkgs
+    ghuser, repo = if ghuser_and_or_repo isa AbstractString
       # Only the repo was passed as a standalone value.
-      default_user(), user_repo
+      default_ghuser(), ghuser_and_or_repo
     else
       # The user and repo were passed in a NamedTuple,
       # or just the repo was passed in a NamedTuple.
-      get(user_repo, :user, default_user()), user_repo.repo
+      get(ghuser_and_or_repo, :user, default_ghuser()), ghuser_and_or_repo.repo
     end
-    DOWNSTREAMPKGS *= "          - {user: $(user), repo: $(repo).jl}\n"
+    downstreampkgs *= "          - {user: $(ghuser), repo: $(repo).jl}\n"
   end
-  DOWNSTREAMPKGS = chop(DOWNSTREAMPKGS)
-  return merge(user_replacements, (; DOWNSTREAMPKGS))
+  # Remove extraneous trailing newline character.
+  downstreampkgs = chop(downstreampkgs)
+  return merge(user_replacements, (; downstreampkgs))
 end
 
 function set_default_template_path(template)
@@ -103,23 +137,100 @@ function is_git_repo(path)
   end
 end
 
+"""
+$(SIGNATURES)
+
+All available templates when constructing a package. Includes the following templates: `$(all_templates())`
+"""
+all_templates() = readdir(joinpath(pkgdir(ITensorPkgSkeleton), "templates"))
+
+"""
+$(SIGNATURES)
+
+Default templates when constructing a package. Includes the following templates: `$(default_templates())`
+"""
+default_templates() = all_templates()
+
+function to_pkgskeleton(user_replacements)
+  return Dict(uppercase.(string.(keys(user_replacements))) .=> values(user_replacements))
+end
+
+"""
+$(SIGNATURES)
+
+!!! warning
+    This function might overwrite existing code if you specify a path to a package that already exists, use with caution! See [`PkgSkeleton.jl`](https://github.com/tpapp/PkgSkeleton.jl) for more details. If you are updating an existing package, make sure you save everything you want to keep (for example, commit all of your changes if it is a git repository).
+
+Generate a package template for a package, by default in the ITensor organization, or update an existing package. This is a wrapper around [`PkgSkeleton.generate`](https://github.com/tpapp/PkgSkeleton.jl) but with extra functionality, custom templates used in the ITensor organization, and defaults biased towards creating a package in the ITensor organization.
+
+# Examples
+
+```jldoctest
+julia> using ITensorPkgSkeleton: ITensorPkgSkeleton;
+
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir());
+
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir());
+
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), templates=ITensorPkgSkeleton.default_templates());
+
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), templates=["github"]);
+
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), templates=["src", "github"]);
+
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), ignore_templates=["src", "github"]);
+
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), ghuser="MyOrg");
+
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), downstreampkgs=["ITensors", "ITensorMPS"]);
+
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), downstreampkgs=[(user="ITensor", repo="ITensors")]);
+```
+
+# Arguments
+
+- `pkgname::AbstractString`: Name of the package (without the `.jl` extension). Replaces `{PKGNAME}` in the template.
+
+# Keywords
+
+- `path::AbstractString`: Path where the package will be generated. Defaults to the [development directory](https://pkgdocs.julialang.org/v1/api/#Pkg.develop), i.e. `$(default_path())`.
+- `templates`: A list of templates to use. Select a subset of `ITensorPkgSkeleton.all_templates() = $(all_templates())`. Defaults to `ITensorPkgSkeleton.default_templates() = $(default_templates())`.
+- `ignore_templates`: A list of templates to ignore. This is the same as setting `templates=setdiff(templates, ignore_templates)`.
+- `downstreampkgs`: Specify the downstream packages that depend on this package. Setting this will create a workflow where the downstream tests will be run alongside the tests for this package in Github Actions to ensure that changes to your package don't break the specified downstream packages. Specify it as a list of packages, for example `["DownstreamPkg1", "DownstreamPkg2"]`, which assumes the packages are in the `$(default_ghuser())` organization. Alternatively, specify the organization with `[(user="Org1", repo="DownstreamPkg1"), (user="Org2", repo="DownstreamPkg2")]`; . Defaults to an empty list.
+- `uuid`: Replaces `{UUID}` in the template. Defaults to the existing UUID in the `Project.toml` if the path points to an existing package, otherwise generates one randomly with `UUIDs.uuid4()`.
+- `year`: Replaces `{YEAR}` in the template. Year the package/repository was created. Defaults to the current year.
+"""
 function generate(
-  pkg_name; path=default_path(), templates=default_templates(), user_replacements=(;)
+  pkgname;
+  path=default_path(),
+  templates=default_templates(),
+  ignore_templates=[],
+  user_replacements...,
 )
-  # Set default values.
+  pkgpath = joinpath(path, pkgname)
   user_replacements = merge(default_user_replacements(), user_replacements)
+  # Process downstream package information.
+  user_replacements = format_downstreampkgs(user_replacements)
+  templates = setdiff(templates, ignore_templates)
+  # Check if there are downstream tests.
+  if haskey(user_replacements, :downstreampkgs) &&
+    !isempty(user_replacements.downstreampkgs)
+    templates = [templates; ["downstreampkgs"]]
+  else
+    templates = setdiff(templates, ["downstreampkgs"])
+  end
   # Fill in default path if missing.
   templates = set_default_template_path.(templates)
-  # Process downstream package information.
-  user_replacements = format_downstream_pkgs(user_replacements)
-  pkg_path = joinpath(path, pkg_name)
-  is_new_repo = !is_git_repo(pkg_path)
+  is_new_repo = !is_git_repo(pkgpath)
   branch_name = default_branch_name()
-  user_replacements_dict = Dict(keys(user_replacements) .=> values(user_replacements))
-  PkgSkeleton.generate(pkg_path; templates, user_replacements=user_replacements_dict)
+  user_replacements_pkgskeleton = to_pkgskeleton(user_replacements)
+  @suppress PkgSkeleton.generate(
+    pkgpath; templates, user_replacements=user_replacements_pkgskeleton
+  )
   if is_new_repo
     # Change the default branch if this is a new repository.
-    change_branch_name(pkg_path, branch_name)
+    change_branch_name(pkgpath, branch_name)
+    set_remote_url(path, pkgname, user_replacements.ghuser)
   end
   return nothing
 end

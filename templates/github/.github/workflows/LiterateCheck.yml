@@ -21,7 +21,7 @@ jobs:
           Pkg.develop(PackageSpec(path=pwd()))
           Pkg.instantiate()
           Pkg.add(PackageSpec(name="Literate"))'
-          julia  -e 'include("make_readme.jl")'
+          julia  -e 'include("docs/make_readme.jl")'
       - name: Check if docs need to be updated
         run: |
           julia -e '

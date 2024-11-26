@@ -1,6 +1,7 @@
 ## Reference
 
-```@autodocs
-Modules = [ITensorPkgSkeleton]
-Order = [:constant]
+```@docs
+ITensorPkgSkeleton.generate
+ITensorPkgSkeleton.default_templates
+ITensorPkgSkeleton.all_templates
 ```

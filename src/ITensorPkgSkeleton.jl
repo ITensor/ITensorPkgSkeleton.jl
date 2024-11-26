@@ -140,7 +140,7 @@ end
 """
 $(SIGNATURES)
 
-All available templates when constructing a package. Includes the following templates: $(all_templates())
+All available templates when constructing a package. Includes the following templates: `$(all_templates())`
 """
 function all_templates()
   return [
@@ -161,7 +161,7 @@ end
 """
 $(SIGNATURES)
 
-Default templates when constructing a package. Includes the following templates: $(default_templates())
+Default templates when constructing a package. Includes the following templates: `$(default_templates())`
 """
 default_templates() = all_templates()
 

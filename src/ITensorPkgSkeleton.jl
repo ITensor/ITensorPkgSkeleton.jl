@@ -142,21 +142,7 @@ $(SIGNATURES)
 
 All available templates when constructing a package. Includes the following templates: `$(all_templates())`
 """
-function all_templates()
-  return [
-    "benchmark",
-    "docs",
-    "examples",
-    "formatter",
-    "github",
-    "gitignore",
-    "license",
-    "precommit",
-    "readme",
-    "src",
-    "test",
-  ]
-end
+all_templates() = readdir(joinpath(pkgdir(ITensorPkgSkeleton), "templates"))
 
 """
 $(SIGNATURES)
@@ -182,7 +168,7 @@ Generate a package template for a package, by default in the ITensor organizatio
 ```jldoctest
 julia> using ITensorPkgSkeleton: ITensorPkgSkeleton;
 
-julia> ITensorPkgSkeleton.generate("NewPkg");
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir());
 
 julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir());
 
@@ -226,9 +212,12 @@ function generate(
   # Process downstream package information.
   user_replacements = format_downstreampkgs(user_replacements)
   templates = setdiff(templates, ignore_templates)
-  # Set default values.
-  if haskey(user_replacements, :downstreampkgs)
-    templates = [templates; "downstreampkgs"]
+  # Check if there are downstream tests.
+  if haskey(user_replacements, :downstreampkgs) &&
+    !isempty(user_replacements.downstreampkgs)
+    templates = [templates; ["downstreampkgs"]]
+  else
+    templates = setdiff(templates, ["downstreampkgs"])
   end
   # Fill in default path if missing.
   templates = set_default_template_path.(templates)

@@ -17,9 +17,11 @@ using Test: @test, @testset
     path = mktempdir()
     ITensorPkgSkeleton.generate("NewPkg"; path)
     @test isdir(joinpath(path, "NewPkg"))
+    @test isfile(joinpath(path, "NewPkg", "Project.toml"))
     for dir in pkgdirs
       @test isdir(joinpath(path, "NewPkg", dir))
     end
+    @test !isfile(joinpath(path, "NewPkg", ".github", "workflows", "Downstream.yml"))
   end
   @testset "generate with downstream tests" begin
     for templates in (ITensorPkgSkeleton.default_templates(), [])

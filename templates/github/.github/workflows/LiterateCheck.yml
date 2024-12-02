@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  format-check:
+  literate:
     name: "Literate Check"
     uses: "ITensor/JuliaActions/workflows/LiterateCheck.yml@main"
     with:

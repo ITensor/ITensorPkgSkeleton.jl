@@ -32,7 +32,7 @@ jobs:
           - ubuntu-latest
           - macOS-latest
           - windows-latest
-    uses: "ITensor/ITensorActions/workflows/Tests.yml@main"
+    uses: "ITensor/ITensorActions/.github/workflows/Tests.yml@main"
     with:
       group: "${{ matrix.group }}"
       julia-version: "${{ matrix.version }}"

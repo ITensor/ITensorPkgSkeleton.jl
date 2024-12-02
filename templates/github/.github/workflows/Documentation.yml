@@ -16,7 +16,7 @@ concurrency:
 jobs:
   build-and-deploy-docs:
     name: "Documentation"
-    uses: "ITensor/JuliaActions/workflows/Documentation.yml@main"
+    uses: "ITensor/ITensorActions/workflows/Documentation.yml@main"
     with:
       localregistry: https://github.com/ITensor/ITensorRegistry.git
     secrets: "inherit"

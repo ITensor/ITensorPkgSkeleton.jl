@@ -10,4 +10,4 @@ on:
 jobs:
   format-check:
     name: "Format Check"
-    uses: "ITensor/JuliaActions/workflows/FormatCheck.yml@main"
+    uses: "ITensor/ITensorActions/workflows/FormatCheck.yml@main"

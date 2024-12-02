@@ -10,6 +10,6 @@ on:
 jobs:
   literate:
     name: "Literate Check"
-    uses: "ITensor/JuliaActions/workflows/LiterateCheck.yml@main"
+    uses: "ITensor/ITensorActions/workflows/LiterateCheck.yml@main"
     with:
       localregistry: https://github.com/ITensor/JuliaRegistry.git

@@ -11,3 +11,5 @@ jobs:
   format-check:
     name: "Literate Check"
     uses: "ITensor/JuliaActions/workflows/LiterateCheck.yml@main"
+    with:
+      localregistry: https://github.com/ITensor/JuliaRegistry.git

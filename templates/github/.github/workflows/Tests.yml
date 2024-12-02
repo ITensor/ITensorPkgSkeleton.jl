@@ -37,5 +37,6 @@ jobs:
       group: "${{ matrix.group }}"
       julia-version: "${{ matrix.version }}"
       os: "${{ matrix.os }}"
+      localregistry: https://github.com/ITensor/JuliaRegistry.git
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

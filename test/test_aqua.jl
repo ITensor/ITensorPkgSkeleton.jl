@@ -1,6 +1,6 @@
 @eval module $(gensym())
-using Aqua: Aqua
 using ITensorPkgSkeleton: ITensorPkgSkeleton
+using Aqua: Aqua
 using Test: @testset
 
 @testset "Code quality (Aqua.jl)" begin

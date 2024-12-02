@@ -1,4 +1,4 @@
-name: CI
+name: Tests
 on:
   push:
     branches:
@@ -32,7 +32,7 @@ jobs:
           - ubuntu-latest
           - macOS-latest
           - windows-latest
-    uses: "ITensor/JuliaActions/workflows/tests.yml@main"
+    uses: "ITensor/JuliaActions/workflows/Tests.yml@main"
     with:
       group: "${{ matrix.group }}"
       julia-version: "${{ matrix.version }}"

@@ -12,4 +12,4 @@ jobs:
     name: "Literate Check"
     uses: "ITensor/ITensorActions/workflows/LiterateCheck.yml@main"
     with:
-      localregistry: https://github.com/ITensor/JuliaRegistry.git
+      localregistry: https://github.com/ITensor/ITensorRegistry.git

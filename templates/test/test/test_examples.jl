@@ -3,8 +3,9 @@ using {PKGNAME}: {PKGNAME}
 using Suppressor: @suppress
 using Test: @testset
 
-@testset "{PKGNAME}.jl" begin
-  filenames = filter(readdir(joinpath(pkgdir({PKGNAME}), "examples"))) do f
+@testset "{PKGNAME}.jl examples" begin
+  examples_path = joinpath(pkgdir({PKGNAME}), "examples")
+  filenames = filter(readdir(examples_path; join=true)) do f
     endswith(".jl")(f)
   end
   @testset "Test $filename" for filename in filenames

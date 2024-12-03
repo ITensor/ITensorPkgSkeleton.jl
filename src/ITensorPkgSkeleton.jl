@@ -190,7 +190,7 @@ Generate a package template for a package, by default in the ITensor organizatio
 
 # Examples
 
-```jldoctest
+```julia
 julia> using ITensorPkgSkeleton: ITensorPkgSkeleton;
 
 julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir());

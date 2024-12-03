@@ -4,7 +4,7 @@ using Test: @testset
 
 @testset "{PKGNAME}.jl" begin
   filenames = filter(joinpath(pkgdir({PKGNAME}), "examples")) do f
-    startswith("test_")(f) && endswith(".jl")(f)
+    startswith("example_")(f) && endswith(".jl")(f)
   end
   @testset "Test $filename" for filename in filenames
     include(filename)

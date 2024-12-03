@@ -1,8 +1,13 @@
 @eval module $(gensym())
 using {PKGNAME}: {PKGNAME}
-using Test: @test, @testset
+using Test: @testset
 
-@testset "examples" begin
-  include(joinpath(pkgdir({PKGNAME}), "examples", "README.jl"))
+@testset "{PKGNAME}.jl" begin
+  filenames = filter(joinpath(pkgdir({PKGNAME}), "examples")) do f
+    startswith("test_")(f) && endswith(".jl")(f)
+  end
+  @testset "Test $filename" for filename in filenames
+    include(filename)
+  end
 end
 end

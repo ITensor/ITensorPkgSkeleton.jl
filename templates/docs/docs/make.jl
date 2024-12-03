@@ -5,7 +5,7 @@ DocMeta.setdocmeta!(
   {PKGNAME}, :DocTestSetup, :(using {PKGNAME}); recursive=true
 )
 
-include("make_index.jl")
+include("make_examples.jl")
 
 makedocs(;
   modules=[{PKGNAME}],
@@ -16,7 +16,7 @@ makedocs(;
     edit_link="main",
     assets=String[],
   ),
-  pages=["Home" => "index.md"],
+  pages=["Home" => ["index.md", "examples.md"]],
 )
 
 deploydocs(;

@@ -12,15 +12,12 @@
 This package resides in the `ITensor/ITensorRegistry` local registry.
 In order to install, simply add that registry through your package manager.
 This step is only required once.
-
 ```julia
 julia> using Pkg: Pkg
 
 julia> Pkg.Registry.add(url="https://github.com/ITensor/ITensorRegistry")
 ```
-
 Then, the package can be added as usual through the package manager:
-
 
 ```julia
 julia> Pkg.add("ITensorPkgSkeleton")

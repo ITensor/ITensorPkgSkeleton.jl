@@ -156,28 +156,28 @@ function to_pkgskeleton(user_replacements)
 end
 
 function pkg_registration_message(; pkgname, path)
-return """
-The package "$pkgname" has been generated at "$path".
+  return """
+  The package "$pkgname" has been generated at "$path".
 
-To register the package in the [ITensor registry](https://github.com/ITensor/ITensorRegistry), first add
-the registry if you haven't already with:
-```julia
-julia> using Pkg: Pkg
+  To register the package in the [ITensor registry](https://github.com/ITensor/ITensorRegistry), first add
+  the registry if you haven't already with:
+  ```julia
+  julia> using Pkg: Pkg
 
-julia> Pkg.Registry.add(url="https://github.com/ITensor/ITensorRegistry")
-```
-or:
-```julia
-julia> Pkg.Registry.add(url="git@github.com:ITensor/ITensorRegistry.git")
-```
-if you want to use SSH credentials, which can make it so you don't have to enter your Github ursername and password when registering packages.
+  julia> Pkg.Registry.add(url="https://github.com/ITensor/ITensorRegistry")
+  ```
+  or:
+  ```julia
+  julia> Pkg.Registry.add(url="git@github.com:ITensor/ITensorRegistry.git")
+  ```
+  if you want to use SSH credentials, which can make it so you don't have to enter your Github ursername and password when registering packages.
 
-Then, use `LocalRegistry.jl` to register the package. First, you should add `LocalRegistry.jl` in your global environment. Then, activate the package and call:
-```julia
-using LocalRegistry: LocalRegistry
-LocalRegistry.register()
-```
-"""
+  Then, use `LocalRegistry.jl` to register the package. First, you should add `LocalRegistry.jl` in your global environment. Then, activate the package and call:
+  ```julia
+  using LocalRegistry: LocalRegistry
+  LocalRegistry.register()
+  ```
+  """
 end
 
 """

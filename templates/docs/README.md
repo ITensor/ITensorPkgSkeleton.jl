@@ -31,8 +31,6 @@ Then, the package can be added as usual through the package manager:
 julia> Pkg.add("{PKGNAME}")
 ```
 
-See the [documentation](https://itensor.github.io/{PKGNAME}.jl) for more details and examples.
-
 ## Examples
 
 ````julia

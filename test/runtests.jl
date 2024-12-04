@@ -36,8 +36,8 @@ const GROUP = uppercase(
   # test examples
   examplepath = joinpath(@__DIR__, "..", "examples")
   for file in filter(endswith(".jl"), readdir(examplepath; join=true))
-    @eval @safetestset $file begin
-      @suppress include($file)
+    @suppress @eval @safetestset $file begin
+      include($file)
     end
   end
 end

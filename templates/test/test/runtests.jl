@@ -18,29 +18,19 @@ const GROUP = uppercase(
   for testgroup in filter(isdir, readdir(@__DIR__))
     if GROUP == "ALL" || GROUP == uppercase(testgroup)
       for file in readdir(joinpath(@__DIR__, testgroup); join=true)
-        @eval @safetestset "$file" begin
-          include(file)
-        end
+        @eval :(@safetestset($file, include(file)))
       end
     end
   end
 
   # single files in top folder
-  if GROUP == "ALL" || GROUP == "TOP"
-    for file in filter(isfile, readdir(@__DIR__))
-      @eval @safetestset "$file" begin
-        include(file)
-      end
-    end
+  for file in filter(isfile, readdir(@__DIR__))
+    @eval :(@safetestset($file, include(file)))
   end
 
   # test examples
-  if GROUP == "ALL" || GROUP == "EXAMPLES"
-    examplepath = joinpath(@__DIR__, "..", "examples")
-    for file in filter(endswith(".jl"), readdir(examplepath; join=true))
-      @eval @safetestset "$file" begin
-        @suppress include(file)
-      end
-    end
+  examplepath = joinpath(@__DIR__, "..", "examples")
+  for file in filter(endswith(".jl"), readdir(examplepath; join=true))
+    @eval :(@safetestset($file, @suppress include(file)))
   end
 end

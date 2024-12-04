@@ -1,4 +1,3 @@
-@eval module $(gensym())
 using ITensorPkgSkeleton: ITensorPkgSkeleton
 using Test: @test, @testset
 
@@ -42,5 +41,4 @@ using Test: @test, @testset
       end
     end
   end
-end
 end

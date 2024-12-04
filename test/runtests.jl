@@ -27,6 +27,7 @@ const GROUP = uppercase(
 
   # single files in top folder
   for file in filter(isfile, readdir(@__DIR__))
+    (file == basename(@__FILE__)) && continue
     @eval @safetestset $file begin
       include($file)
     end

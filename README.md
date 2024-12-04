@@ -17,6 +17,12 @@ julia> using Pkg: Pkg
 
 julia> Pkg.Registry.add(url="https://github.com/ITensor/ITensorRegistry")
 ```
+or:
+```julia
+julia> Pkg.Registry.add(url="git@github.com:ITensor/ITensorRegistry.git")
+```
+if you want to use SSH credentials, which can make it so you don't have to enter your Github ursername and password when registering packages.
+
 Then, the package can be added as usual through the package manager:
 
 ```julia

@@ -13,11 +13,17 @@ const GROUP = uppercase(
   end,
 )
 
+function istestfile(filename)
+  return isfile(filename) &&
+         endswith(filename, ".jl") &&
+         startswith(basename(filename), "test")
+end
+
 @time begin
   # tests in groups based on folder structure
   for testgroup in filter(isdir, readdir(@__DIR__))
     if GROUP == "ALL" || GROUP == uppercase(testgroup)
-      for file in readdir(joinpath(@__DIR__, testgroup); join=true)
+      for file in filter(istestfile, readdir(joinpath(@__DIR__, testgroup); join=true))
         @eval @safetestset $file begin
           include($file)
         end
@@ -26,7 +32,7 @@ const GROUP = uppercase(
   end
 
   # single files in top folder
-  for file in filter(isfile, readdir(@__DIR__))
+  for file in filter(istestfile, readdir(@__DIR__))
     (file == basename(@__FILE__)) && continue
     @eval @safetestset $file begin
       include($file)

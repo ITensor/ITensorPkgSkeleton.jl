@@ -26,17 +26,21 @@ const GROUP = uppercase(
   end
 
   # single files in top folder
-  for file in filter(isfile, readdir(@__DIR__))
-    @eval @safetestset "$file" begin
-      include(file)
+  if GROUP == "ALL" || GROUP == "TOP"
+    for file in filter(isfile, readdir(@__DIR__))
+      @eval @safetestset "$file" begin
+        include(file)
+      end
     end
   end
 
   # test examples
-  examplepath = joinpath(@__DIR__, "..", "examples")
-  for file in filter(endswith(".jl"), readdir(examplepath; join=true))
-    @eval @safetestset "$file" begin
-      @suppress include(file)
+  if GROUP == "ALL" || GROUP == "EXAMPLES"
+    examplepath = joinpath(@__DIR__, "..", "examples")
+    for file in filter(endswith(".jl"), readdir(examplepath; join=true))
+      @eval @safetestset "$file" begin
+        @suppress include(file)
+      end
     end
   end
 end

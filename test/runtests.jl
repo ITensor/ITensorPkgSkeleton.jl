@@ -1,4 +1,4 @@
-using SafeTestsets
+using SafeTestsets: @safetestset
 using Suppressor: @suppress
 
 # check for filtered groups

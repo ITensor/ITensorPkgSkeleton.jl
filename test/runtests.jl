@@ -45,7 +45,12 @@ end
     filename = basename(file)
     @eval begin
       @safetestset $filename begin
-        $(Expr(:macrocall, GlobalRef(Suppressor, Symbol("@suppress")), LineNumberNode(@__LINE__, @__FILE__), :(include($file))))
+        $(Expr(
+          :macrocall,
+          GlobalRef(Suppressor, Symbol("@suppress")),
+          LineNumberNode(@__LINE__, @__FILE__),
+          :(include($file)),
+        ))
       end
     end
   end

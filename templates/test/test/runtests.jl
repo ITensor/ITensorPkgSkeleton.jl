@@ -1,5 +1,5 @@
 using SafeTestsets: @safetestset
-using Suppressor: @suppress
+using Suppressor: Suppressor
 
 # check for filtered groups
 # either via `--group=ALL` or through ENV["GROUP"]
@@ -42,8 +42,16 @@ end
   # test examples
   examplepath = joinpath(@__DIR__, "..", "examples")
   for file in filter(endswith(".jl"), readdir(examplepath; join=true))
-    @suppress @eval @safetestset $file begin
-      include($file)
+    filename = basename(file)
+    @eval begin
+      @safetestset $filename begin
+        $(Expr(
+          :macrocall,
+          GlobalRef(Suppressor, Symbol("@suppress")),
+          LineNumberNode(@__LINE__, @__FILE__),
+          :(include($file)),
+        ))
+      end
     end
   end
 end

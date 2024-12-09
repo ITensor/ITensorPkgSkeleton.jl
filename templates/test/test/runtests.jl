@@ -43,7 +43,7 @@ isexamplefile(fn) =
   # test examples
   examplepath = joinpath(@__DIR__, "..", "examples")
   for (root, _, files) in walkdir(examplepath)
-    contains(root, "setup") && continue
+    contains(chopprefix(root, @__DIR__), "setup") && continue
     for file in filter(isexamplefile, files)
       filename = joinpath(root, file)
       @eval begin

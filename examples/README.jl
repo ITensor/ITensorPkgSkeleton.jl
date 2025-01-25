@@ -1,5 +1,5 @@
 # # ITensorPkgSkeleton.jl
-# 
+#
 # [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ITensor.github.io/ITensorPkgSkeleton.jl/stable/)
 # [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://ITensor.github.io/ITensorPkgSkeleton.jl/dev/)
 # [![Build Status](https://github.com/ITensor/ITensorPkgSkeleton.jl/actions/workflows/Tests.yml/badge.svg?branch=main)](https://github.com/ITensor/ITensorPkgSkeleton.jl/actions/workflows/Tests.yml?query=branch%3Amain)
@@ -38,5 +38,5 @@ julia> Pkg.add("ITensorPkgSkeleton")
 # ## Examples
 
 using ITensorPkgSkeleton: ITensorPkgSkeleton
-ITensorPkgSkeleton.generate("MyPackage.jl")
+ITensorPkgSkeleton.generate("MyPackage")
 # Examples go here.

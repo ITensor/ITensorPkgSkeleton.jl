@@ -33,6 +33,7 @@ julia> Pkg.add("ITensorPkgSkeleton")
 
 ````julia
 using ITensorPkgSkeleton: ITensorPkgSkeleton
+ITensorPkgSkeleton.generate("MyPackage")
 ````
 
 Examples go here.

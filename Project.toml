@@ -1,7 +1,7 @@
 name = "ITensorPkgSkeleton"
 uuid = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
 authors = ["ITensor developers <support@itensor.org> and contributors"]
-version = "0.2.2"
+version = "0.2.3"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"

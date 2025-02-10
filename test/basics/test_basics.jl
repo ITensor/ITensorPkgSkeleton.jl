@@ -20,7 +20,7 @@ using Test: @test, @testset
     for dir in pkgdirs
       @test isdir(joinpath(path, "NewPkg", dir))
     end
-    @test !isfile(joinpath(path, "NewPkg", ".github", "workflows", "Downstream.yml"))
+    @test !isfile(joinpath(path, "NewPkg", ".github", "workflows", "IntegrationTest.yml"))
   end
   @testset "generate with downstream tests" begin
     for templates in (ITensorPkgSkeleton.default_templates(), [])
@@ -29,9 +29,11 @@ using Test: @test, @testset
         ITensorPkgSkeleton.generate("NewPkg"; path, templates, downstreampkgs)
         @test isdir(joinpath(path, "NewPkg"))
         @test isdir(joinpath(path, "NewPkg", ".github", "workflows"))
-        @test isfile(joinpath(path, "NewPkg", ".github", "workflows", "Downstream.yml"))
+        @test isfile(
+          joinpath(path, "NewPkg", ".github", "workflows", "IntegrationTest.yml")
+        )
         @test open(
-          joinpath(path, "NewPkg", ".github", "workflows", "Downstream.yml"), "r"
+          joinpath(path, "NewPkg", ".github", "workflows", "IntegrationTest.yml"), "r"
         ) do io
           return contains(read(io, String), "- \"ITensor/DownstreamPkg.jl\"")
         end

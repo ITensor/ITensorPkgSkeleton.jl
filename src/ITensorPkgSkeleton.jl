@@ -116,7 +116,7 @@ function format_downstreampkgs(user_replacements)
       # or just the repo was passed in a NamedTuple.
       get(ghuser_and_or_repo, :user, default_ghuser()), ghuser_and_or_repo.repo
     end
-    downstreampkgs *= "          - \"$(ghuser)/$(repo).jl\"\n"
+    downstreampkgs *= "           - \'$(ghuser)/$(repo).jl\'\n"
   end
   # Remove extraneous trailing newline character.
   downstreampkgs = chop(downstreampkgs)

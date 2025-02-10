@@ -13,8 +13,9 @@ jobs:
     strategy:
        matrix:
          repo:
+           # Specify the user and repository name, for example:
            # - 'ITensor/BlockSparseArrays.jl'
-           # - 'ITensor/NamedDimsArrays.jl'
+           - ''
     uses: "ITensor/ITensorActions/.github/workflows/IntegrationTest.yml@main"
     with:
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"

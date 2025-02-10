@@ -114,7 +114,7 @@ function format_downstreampkgs(user_replacements)
     else
       # The user and repo were passed in a NamedTuple,
       # or just the repo was passed in a NamedTuple.
-      get(ghuser_and_or_repo, :user, default_ghuser()), ghuser_and_or_repo.repo
+      get(ghuser_and_or_repo, :ghuser, default_ghuser()), ghuser_and_or_repo.repo
     end
     downstreampkgs *= "           - \'$(ghuser)/$(repo).jl\'\n"
   end
@@ -209,7 +209,7 @@ julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), ghuser="MyOrg");
 
 julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), downstreampkgs=["ITensors", "ITensorMPS"]);
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), downstreampkgs=[(user="ITensor", repo="ITensors")]);
+julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), downstreampkgs=[(ghuser="ITensor", repo="ITensors")]);
 ```
 
 # Arguments
@@ -221,7 +221,7 @@ julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), downstreampkgs=[(
 - `path::AbstractString`: Path where the package will be generated. Defaults to the [development directory](https://pkgdocs.julialang.org/v1/api/#Pkg.develop), i.e. `$(default_path())`.
 - `templates`: A list of templates to use. Select a subset of `ITensorPkgSkeleton.all_templates() = $(all_templates())`. Defaults to `ITensorPkgSkeleton.default_templates() = $(default_templates())`.
 - `ignore_templates`: A list of templates to ignore. This is the same as setting `templates=setdiff(templates, ignore_templates)`.
-- `downstreampkgs`: Specify the downstream packages that depend on this package. Setting this will create a workflow where the downstream tests will be run alongside the tests for this package in Github Actions to ensure that changes to your package don't break the specified downstream packages. Specify it as a list of packages, for example `["DownstreamPkg1", "DownstreamPkg2"]`, which assumes the packages are in the `$(default_ghuser())` organization. Alternatively, specify the organization with `[(user="Org1", repo="DownstreamPkg1"), (user="Org2", repo="DownstreamPkg2")]`; . Defaults to an empty list.
+- `downstreampkgs`: Specify the downstream packages that depend on this package. Setting this will create a workflow where the downstream tests will be run alongside the tests for this package in Github Actions to ensure that changes to your package don't break the specified downstream packages. Specify it as a list of packages, for example `["DownstreamPkg1", "DownstreamPkg2"]`, which assumes the packages are in the `$(default_ghuser())` organization. Alternatively, specify the organization with `[(ghuser="Org1", repo="DownstreamPkg1"), (ghuser="Org2", repo="DownstreamPkg2")]`; . Defaults to an empty list.
 - `uuid`: Replaces `{UUID}` in the template. Defaults to the existing UUID in the `Project.toml` if the path points to an existing package, otherwise generates one randomly with `UUIDs.uuid4()`.
 - `year`: Replaces `{YEAR}` in the template. Year the package/repository was created. Defaults to the current year.
 """

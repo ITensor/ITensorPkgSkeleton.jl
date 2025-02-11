@@ -1,0 +1,41 @@
+name: "Integration Request"
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  get-pr-comment:
+    if: |
+      github.event.issue.pull_request &&
+      contains(fromJSON('["OWNER", "COLLABORATOR", "MEMBER"]'), github.event.comment.author_association)
+    runs-on: ubuntu-latest
+    outputs:
+      repo: ${{ steps.step1.outputs.group2 }}
+      status: ${{ steps.step1.outputs.match }}
+    steps:
+      - id: step1
+        uses: KyoriPowered/action-regex-match@v3
+        with:
+          text: ${{ github.event.comment.body }}
+          regex: '^(@integrationtests )(.*)$'
+      - id: debug
+        run: echo "${{ steps.step1.outputs.match }}"
+
+  runtests:
+    needs: get-pr-comment
+    if: ${{ needs.get-pr-comment.outputs.status != '' }}
+    uses: ITensor/ITensorActions/.github/workflows/IntegrationTest.yml@main
+    with:
+      localregistry: "https://github.com/ITensor/ITensorRegistry.git"
+      repo: "${{ needs.get-pr-comment.outputs.repo }}"
+
+  report:
+    needs: [get-pr-comment, runtests]
+    if: ${{ success() && needs.get-pr-comment.outputs.status != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          reactions: '+1'

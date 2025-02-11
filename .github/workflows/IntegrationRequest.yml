@@ -1,0 +1,29 @@
+name: "Integration Request"
+
+on:
+  issue_comment:
+    types: [created]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Cancel intermediate builds: only if it is a pull request build.
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
+jobs:
+  integrationtests:
+  if: |
+      github.event.issue.pull_request &&
+      (github.event.comment.author_association == "OWNER" ||
+      github.event.comment.author_association == "MEMBER" ||
+      github.event.comment.author_association == "COLLABORATOR")
+  steps:
+    - uses: actions-ecosystem/action-regex-match@v2
+      id: get-pr-comment
+      with:
+        text: ${{ github.event.comment.body }}
+        regex: '^(@integrationtests )(.*)$'
+
+    - uses: ITensor/ITensorActions/.github/workflows/IntegrationTest.yml@main
+      with:
+        localregistry: "https://github.com/ITensor/ITensorRegistry.git"
+        repo: "${{ steps.get-pr-comment.outputs.group2 }}"

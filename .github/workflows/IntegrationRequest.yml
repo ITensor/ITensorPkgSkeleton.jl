@@ -4,11 +4,6 @@ on:
   issue_comment:
     types: [created]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  # Cancel intermediate builds: only if it is a pull request build.
-  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
-
 jobs:
   get-pr-comment:
     if: |
@@ -24,10 +19,12 @@ jobs:
         with:
           text: ${{ github.event.comment.body }}
           regex: '^(@integrationtests )(.*)$'
+      - id: debug
+        run: echo "${{ steps.step1.outputs.match }}"
 
   runtests:
     needs: get-pr-comment
-    if: ${{ needs.get-pr-comment.outputs.match != '' }}
+    if: ${{ needs.get-pr-comment.outputs.status != '' }}
     uses: ITensor/ITensorActions/.github/workflows/IntegrationTest.yml@main
     with:
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
@@ -35,7 +32,7 @@ jobs:
 
   report:
     needs: [get-pr-comment, runtests]
-    if: ${{ success() && needs.get-pr-comment.outputs.match != '' }}
+    if: ${{ success() && needs.get-pr-comment.outputs.status != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: peter-evans/create-or-update-comment@v4

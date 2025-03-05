@@ -5,4 +5,5 @@ ITensorPkgSkeleton = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
 Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
 
 [compat]
+Literate = "2"
 ITensorPkgSkeleton = "0.3"

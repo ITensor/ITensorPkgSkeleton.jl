@@ -9,7 +9,7 @@ function ccq_logo(content)
 
   include_ccq_logo = """
     ```@raw html
-    <img src="../assets/CCQ.png">
+    <img src="assets/CCQ.png">
     ```
     """
   content = replace(content, "{CCQ_LOGO}" => include_ccq_logo)

@@ -16,5 +16,5 @@ Literate.markdown(
   joinpath(pkgdir(ITensorPkgSkeleton), "docs", "src");
   flavor=Literate.DocumenterFlavor(),
   name="index",
-  preprocess=ccq_logo,
+  postprocess=ccq_logo,
 )

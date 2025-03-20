@@ -9,7 +9,7 @@
 
 ## Support
 
-<img src="docs/assets/CCQ.png" width="20%" alt="Flatiron Center for Computational Quantum Physics logo.">
+![Flatiron Center for Computational Quantum Physics logo.](docs/src/assets/CCQ.png)
 
 ITensorPkgSkeleton.jl is supported by the Flatiron Institute, a division of the Simons Foundation.
 

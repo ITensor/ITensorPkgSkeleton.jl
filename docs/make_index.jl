@@ -6,7 +6,7 @@ function ccq_logo(content)
   # https://github.com/JuliaDocs/Documenter.jl/issues/921
   include_ccq_logo = """
     ```@raw html
-    <img src="../assets/CCQ.png" width="584" height="111" alt="Flatiron Center for Computational Quantum Physics logo.">
+    <img src="../assets/CCQ.png" width="10%" alt="Flatiron Center for Computational Quantum Physics logo.">
     ```
     """
   content = replace(content, "{CCQ_LOGO}" => include_ccq_logo)

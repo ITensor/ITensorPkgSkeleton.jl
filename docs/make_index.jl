@@ -2,7 +2,13 @@ using Literate: Literate
 using ITensorPkgSkeleton: ITensorPkgSkeleton
 
 function ccq_logo(content)
-  include_ccq_logo = "![Flatiron Center for Computational Quantum Physics logo.](assets/CCQ.png)"
+  # Prepending an extra `..` to the path is required to circumvent:
+  # https://github.com/JuliaDocs/Documenter.jl/issues/921
+  include_ccq_logo = """
+    ```@raw html
+    <img src="../assets/CCQ.png" width="20%" alt="Flatiron Center for Computational Quantum Physics logo.">
+    ```
+    """
   content = replace(content, "{CCQ_LOGO}" => include_ccq_logo)
   return content
 end

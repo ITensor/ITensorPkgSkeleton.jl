@@ -7,6 +7,12 @@
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
+## Support
+
+<img src="docs/assets/CCQ.png" width="20%" alt="Flatiron Center for Computational Quantum Physics logo.">
+
+ITensorPkgSkeleton.jl is supported by the Flatiron Institute, a division of the Simons Foundation.
+
 ## Installation instructions
 
 This package resides in the `ITensor/ITensorRegistry` local registry.

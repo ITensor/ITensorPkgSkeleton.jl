@@ -9,7 +9,7 @@
 
 ## Support
 
-<img src="docs/assets/CCQ.png" width="20%" alt="Flatiron Center for Computational Quantum Physics logo.">
+<img src="docs/src/assets/CCQ.png" width="20%" alt="Flatiron Center for Computational Quantum Physics logo.">
 
 {PKGNAME}.jl is supported by the Flatiron Institute, a division of the Simons Foundation.
 

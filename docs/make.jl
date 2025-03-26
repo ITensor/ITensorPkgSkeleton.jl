@@ -12,7 +12,7 @@ makedocs(;
   authors="ITensor developers <support@itensor.org> and contributors",
   sitename="ITensorPkgSkeleton.jl",
   format=Documenter.HTML(;
-    canonical="https://ITensor.github.io/ITensorPkgSkeleton.jl",
+    canonical="https://itensor.github.io/ITensorPkgSkeleton.jl",
     edit_link="main",
     assets=["assets/favicon.ico", "assets/extras.css"],
   ),

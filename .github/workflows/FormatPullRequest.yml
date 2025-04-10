@@ -2,7 +2,7 @@ name: "Format Pull Request"
 
 on:
   schedule:
-    - cron: * * * * *
+    - cron: '* * * * *'
   workflow_dispatch:
 permissions:
   contents: write

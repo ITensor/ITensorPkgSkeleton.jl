@@ -1,0 +1,10 @@
+name: "Format Pull Request"
+
+on:
+  schedule:
+    - cron: '* * * * *'
+
+jobs:
+  format-pull-request:
+    name: "Format Pull Request"
+    uses: "ITensor/ITensorActions/workflows/FormatPullRequest.yml@main"

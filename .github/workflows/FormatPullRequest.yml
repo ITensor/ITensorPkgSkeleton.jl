@@ -7,4 +7,4 @@ on:
 jobs:
   format-pull-request:
     name: "Format Pull Request"
-    uses: "ITensor/ITensorActions/workflows/FormatPullRequest.yml@main"
+    uses: "ITensor/ITensorActions/.github/workflows/FormatPullRequest.yml@main"

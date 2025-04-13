@@ -1,5 +1,5 @@
-using {PKGNAME}
 using BenchmarkTools
+using {PKGNAME}
 
 SUITE = BenchmarkGroup()
 SUITE["rand"] = @benchmarkable rand(10)

@@ -1,2 +1,5 @@
 [deps]
 {PKGNAME} = "{UUID}"
+
+[compat]
+{PKGNAME} = "0.1"

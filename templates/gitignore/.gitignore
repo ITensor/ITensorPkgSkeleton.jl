@@ -9,6 +9,7 @@
 .vscode/
 Manifest.toml
 benchmark/*.json
+dev
 docs/Manifest.toml
 docs/build/
 docs/src/index.md

@@ -1,7 +1,9 @@
 name: "Format Check"
 
 on:
-  pull_request:
+  pull_request_target:
+    paths: ['**/*.jl']
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read

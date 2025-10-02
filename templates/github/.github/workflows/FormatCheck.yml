@@ -1,17 +1,13 @@
 name: "Format Check"
 
+on:
+  pull_request:
+
 permissions:
   contents: read
   checks: write
   issues: write
   pull-requests: write
-
-on:
-  push:
-    branches:
-      - 'main'
-    tags: '*'
-  pull_request:
 
 jobs:
   format-check:

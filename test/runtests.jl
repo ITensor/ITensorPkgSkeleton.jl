@@ -8,7 +8,7 @@ const pat = r"(?:--group=)(\w+)"
 arg_id = findfirst(contains(pat), ARGS)
 const GROUP = uppercase(
     if isnothing(arg_id)
-        get(ENV, "GROUP", "ALL")
+        arg = get(ENV, "GROUP", "ALL")
         # For some reason `ENV["GROUP"]` is set to `""`
         # when running via GitHub Actions, so handle that case:
         arg == "" ? "ALL" : arg

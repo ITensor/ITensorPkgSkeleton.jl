@@ -35,6 +35,11 @@ end
 
     for testgroup in filter(isdir, readdir(@__DIR__; join = true))
         if GROUP == "ALL" || GROUP == uppercase(basename(testgroup))
+
+            @show testgroup
+            @show readdir(testgroup; join = true)
+            @show filter(istestfile, readdir(testgroup; join = true))
+
             for filename in filter(istestfile, readdir(testgroup; join = true))
                 @eval @safetestset $(basename(filename)) begin
                     include($filename)

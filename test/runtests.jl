@@ -4,15 +4,14 @@ using Suppressor: Suppressor
 # check for filtered groups
 # either via `--group=ALL` or through ENV["GROUP"]
 
-@show ARGS
-@show haskey(ENV, "GROUP")
-@show haskey(ENV, "GROUP") ? ENV["GROUP"] : "not set"
-
 const pat = r"(?:--group=)(\w+)"
 arg_id = findfirst(contains(pat), ARGS)
 const GROUP = uppercase(
     if isnothing(arg_id)
         get(ENV, "GROUP", "ALL")
+        # For some reason `ENV["GROUP"]` is set to `""`
+        # when running via GitHub Actions, so handle that case:
+        arg == "" ? "ALL" : arg
     else
         only(match(pat, ARGS[arg_id]).captures)
     end,

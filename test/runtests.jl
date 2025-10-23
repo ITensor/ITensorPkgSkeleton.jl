@@ -30,20 +30,8 @@ end
 
 @time begin
     # tests in groups based on folder structure
-
-    @show GROUP
-    @show @__DIR__
-    @show readdir(@__DIR__; join = true)
-    testgroups = @show filter(isdir, readdir(@__DIR__; join = true))
-    @show uppercase.(basename.(testgroups))
-
     for testgroup in filter(isdir, readdir(@__DIR__; join = true))
         if GROUP == "ALL" || GROUP == uppercase(basename(testgroup))
-
-            @show testgroup
-            @show readdir(testgroup; join = true)
-            @show filter(istestfile, readdir(testgroup; join = true))
-
             for filename in filter(istestfile, readdir(testgroup; join = true))
                 @eval @safetestset $(basename(filename)) begin
                     include($filename)

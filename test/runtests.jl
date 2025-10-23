@@ -3,6 +3,9 @@ using Suppressor: Suppressor
 
 # check for filtered groups
 # either via `--group=ALL` or through ENV["GROUP"]
+
+@show ARGS
+
 const pat = r"(?:--group=)(\w+)"
 arg_id = findfirst(contains(pat), ARGS)
 const GROUP = uppercase(

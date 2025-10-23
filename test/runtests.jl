@@ -5,6 +5,8 @@ using Suppressor: Suppressor
 # either via `--group=ALL` or through ENV["GROUP"]
 
 @show ARGS
+@show haskey(ENV, "GROUP")
+@show haskey(ENV, "GROUP") ? ENV["GROUP"] : "not set"
 
 const pat = r"(?:--group=)(\w+)"
 arg_id = findfirst(contains(pat), ARGS)

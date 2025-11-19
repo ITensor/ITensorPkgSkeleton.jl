@@ -1,5 +1,5 @@
-*.jl.cov
-*.jl.mem
+*.cov
+*.mem
 *.o
 *.swp
 .DS_Store

@@ -16,5 +16,5 @@ repos:
 - repo: https://github.com/fredrikekre/runic-pre-commit
   rev: v2.0.1
   hooks:
-    - id: runic
-      exclude: (/.*)?templates(/.*)?$
+  - id: runic
+    exclude: (/.*)?templates(/.*)?$

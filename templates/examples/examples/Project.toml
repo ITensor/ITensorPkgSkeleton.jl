@@ -1,5 +1,8 @@
 [deps]
 {PKGNAME} = "{UUID}"
 
+[sources]
+{PKGNAME} = {path = ".."}
+
 [compat]
 {PKGNAME} = "0.1"

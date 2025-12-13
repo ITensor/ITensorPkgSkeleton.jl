@@ -5,3 +5,6 @@ version = "0.1.0"
 
 [compat]
 julia = "1.10"
+
+[workspace]
+projects = ["benchmark", "dev", "docs", "examples", "test"]

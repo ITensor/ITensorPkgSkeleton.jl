@@ -1,10 +1,10 @@
 name = "{PKGNAME}"
 uuid = "{UUID}"
-authors = ["ITensor developers <support@itensor.org> and contributors"]
 version = "0.1.0"
-
-[compat]
-julia = "1.10"
+authors = ["ITensor developers <support@itensor.org> and contributors"]
 
 [workspace]
 projects = ["benchmark", "dev", "docs", "examples", "test"]
+
+[compat]
+julia = "1.10"

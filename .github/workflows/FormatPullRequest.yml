@@ -13,4 +13,4 @@ jobs:
     name: "Format Pull Request"
     uses: "ITensor/ITensorActions/.github/workflows/FormatPullRequest.yml@main"
     with:
-      directory: "benchmark docs examples src test" # exclude "templates" directory
+      directory: benchmark docs examples src test

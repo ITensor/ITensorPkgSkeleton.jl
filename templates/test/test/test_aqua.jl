@@ -1,5 +1,5 @@
-using {PKGNAME}: {PKGNAME}
 using Aqua: Aqua
+using {PKGNAME}: {PKGNAME}
 using Test: @testset
 
 @testset "Code quality (Aqua.jl)" begin

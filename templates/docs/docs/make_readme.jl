@@ -17,5 +17,5 @@ Literate.markdown(
     joinpath(pkgdir({PKGNAME}));
     flavor = Literate.CommonMarkFlavor(),
     name = "README",
-    postprocess = ccq_logo,
+    postprocess = ccq_logo
 )

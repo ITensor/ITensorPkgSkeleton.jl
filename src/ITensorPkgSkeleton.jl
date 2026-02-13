@@ -9,6 +9,7 @@ end
 
 using DocStringExtensions: SIGNATURES
 using Git: git
+using Git_jll: Git_jll
 using LibGit2: LibGit2
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
@@ -16,9 +17,7 @@ using Suppressor: @suppress
 
 # Configure `Git.jl`/`Git_jll.jl` to
 # use the local installation of git.
-using Preferences: Preferences
-# Need to load to set the preferences.
-using Git_jll: Git_jll
+# Need to Preferences.jl to set the preferences.
 function use_system_git!()
     git_path = try
         readchomp(`which git`)
@@ -80,7 +79,8 @@ default_useremail() = "support@itensor.org"
 
 function default_user_replacements()
     return (
-        ghuser = default_ghuser(), username = default_username(), useremail = default_useremail(),
+        ghuser = default_ghuser(), username = default_username(),
+        useremail = default_useremail(),
     )
 end
 
@@ -175,6 +175,7 @@ end
 $(SIGNATURES)
 
 !!! warning
+
     This function might overwrite existing code if you specify a path to a package that already exists, use with caution! See [`PkgSkeleton.jl`](https://github.com/tpapp/PkgSkeleton.jl) for more details. If you are updating an existing package, make sure you save everything you want to keep (for example, commit all of your changes if it is a git repository).
 
 Generate a package template for a package, by default in the ITensor organization, or update an existing package. This is a wrapper around [`PkgSkeleton.generate`](https://github.com/tpapp/PkgSkeleton.jl) but with extra functionality, custom templates used in the ITensor organization, and defaults biased towards creating a package in the ITensor organization.
@@ -184,42 +185,50 @@ Generate a package template for a package, by default in the ITensor organizatio
 ```julia
 julia> using ITensorPkgSkeleton: ITensorPkgSkeleton;
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir());
+julia> ITensorPkgSkeleton.generate("NewPkg"; path = mktempdir());
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir());
+julia> ITensorPkgSkeleton.generate("NewPkg"; path = mktempdir());
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), templates=ITensorPkgSkeleton.default_templates());
+julia> ITensorPkgSkeleton.generate(
+           "NewPkg";
+           path = mktempdir(),
+           templates = ITensorPkgSkeleton.default_templates()
+       );
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), templates=["github"]);
+julia> ITensorPkgSkeleton.generate("NewPkg"; path = mktempdir(), templates = ["github"]);
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), templates=["src", "github"]);
+julia> ITensorPkgSkeleton.generate(
+           "NewPkg"; path = mktempdir(), templates = ["src", "github"]
+       );
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), ignore_templates=["src", "github"]);
+julia> ITensorPkgSkeleton.generate(
+           "NewPkg"; path = mktempdir(), ignore_templates = ["src", "github"]
+       );
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), ghuser="MyOrg");
+julia> ITensorPkgSkeleton.generate("NewPkg"; path = mktempdir(), ghuser = "MyOrg");
 
-julia> ITensorPkgSkeleton.generate("NewPkg"; path=mktempdir(), downstreampkgs=["ITensors", "ITensorMPS"]);
+julia> ITensorPkgSkeleton.generate(
+           "NewPkg"; path = mktempdir(), downstreampkgs = ["ITensors", "ITensorMPS"]
+       );
+
 ```
 
 # Arguments
 
-- `pkgname::AbstractString`: Name of the package (without the `.jl` extension). Replaces `{PKGNAME}` in the template.
+  - `pkgname::AbstractString`: Name of the package (without the `.jl` extension). Replaces `{PKGNAME}` in the template.
 
 # Keywords
 
-- `path::AbstractString`: Path where the package will be generated. Defaults to the [development directory](https://pkgdocs.julialang.org/v1/api/#Pkg.develop), i.e. `$(default_path())`.
-- `templates`: A list of templates to use. Select a subset of `ITensorPkgSkeleton.all_templates() = $(all_templates())`. Defaults to `ITensorPkgSkeleton.default_templates() = $(default_templates())`.
-- `ignore_templates`: A list of templates to ignore. This is the same as setting `templates=setdiff(templates, ignore_templates)`.
-- `downstreampkgs`: Specify the downstream packages that depend on this package. Setting this will create a workflow where the downstream tests will be run alongside the tests for this package in Github Actions to ensure that changes to your package don't break the specified downstream packages. Defaults to an empty list.
-- `uuid`: Replaces `{UUID}` in the template. Defaults to the existing UUID in the `Project.toml` if the path points to an existing package, otherwise generates one randomly with `UUIDs.uuid4()`.
-- `year`: Replaces `{YEAR}` in the template. Year the package/repository was created. Defaults to the current year.
+  - `path::AbstractString`: Path where the package will be generated. Defaults to the [development directory](https://pkgdocs.julialang.org/v1/api/#Pkg.develop), i.e. `$(default_path())`.
+  - `templates`: A list of templates to use. Select a subset of `ITensorPkgSkeleton.all_templates() = $(all_templates())`. Defaults to `ITensorPkgSkeleton.default_templates() = $(default_templates())`.
+  - `ignore_templates`: A list of templates to ignore. This is the same as setting `templates=setdiff(templates, ignore_templates)`.    # Process downstream package information.
+  - `downstreampkgs`: Specify the downstream packages that depend on this package. Setting this will create a workflow where the downstream tests will be run alongside the tests for this package in Github Actions to ensure that changes to your package don't break the specified downstream packages. Defaults to an empty list.
+  - `uuid`: Replaces `{UUID}` in the template. Defaults to the existing UUID in the `Project.toml` if the path points to an existing package, otherwise generates one randomly with `UUIDs.uuid4()`.
+  - `year`: Replaces `{YEAR}` in the template. Year the package/repository was created. Defaults to the current year.    # Check if there are downstream tests.
 """
 function generate(
-        pkgname;
-        path = default_path(),
-        templates = default_templates(),
-        ignore_templates = [],
-        user_replacements...,
+        pkgname; path = default_path(), templates = default_templates(),
+        ignore_templates = [], user_replacements...
     )
     pkgpath = joinpath(path, pkgname)
     user_replacements = merge(default_user_replacements(), user_replacements)

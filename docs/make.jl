@@ -1,5 +1,5 @@
-using ITensorPkgSkeleton: ITensorPkgSkeleton
 using Documenter: Documenter, DocMeta, deploydocs, makedocs
+using ITensorPkgSkeleton: ITensorPkgSkeleton
 
 DocMeta.setdocmeta!(
     ITensorPkgSkeleton, :DocTestSetup, :(using ITensorPkgSkeleton); recursive = true
@@ -14,11 +14,12 @@ makedocs(;
     format = Documenter.HTML(;
         canonical = "https://itensor.github.io/ITensorPkgSkeleton.jl",
         edit_link = "main",
-        assets = ["assets/favicon.ico", "assets/extras.css"],
+        assets = ["assets/favicon.ico", "assets/extras.css"]
     ),
-    pages = ["Home" => "index.md", "Reference" => "reference.md"],
+    pages = ["Home" => "index.md", "Reference" => "reference.md"]
 )
 
 deploydocs(;
-    repo = "github.com/ITensor/ITensorPkgSkeleton.jl", devbranch = "main", push_preview = true
+    repo = "github.com/ITensor/ITensorPkgSkeleton.jl", devbranch = "main",
+    push_preview = true
 )

@@ -1,5 +1,5 @@
-using ITensorPkgSkeleton: ITensorPkgSkeleton
 using Aqua: Aqua
+using ITensorPkgSkeleton: ITensorPkgSkeleton
 using Test: @testset
 
 @testset "Code quality (Aqua.jl)" begin

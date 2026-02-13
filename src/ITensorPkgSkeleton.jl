@@ -9,16 +9,11 @@ end
 
 using DocStringExtensions: SIGNATURES
 using Git: git
+using Git_jll: Git_jll
 using LibGit2: LibGit2
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
 using Suppressor: @suppress
-
-# Configure `Git.jl`/`Git_jll.jl` to
-# use the local installation of git.
-using Preferences: Preferences
-# Need to load to set the preferences.
-using Git_jll: Git_jll
 function use_system_git!()
     git_path = try
         readchomp(`which git`)

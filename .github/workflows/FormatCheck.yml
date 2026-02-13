@@ -14,3 +14,5 @@ jobs:
   format-check:
     name: "Format Check"
     uses: "ITensor/ITensorActions/.github/workflows/FormatCheck.yml@main"
+    with:
+      directory: "benchmark docs examples src test" # exclude "templates" directory

@@ -119,6 +119,26 @@ function set_default_template_path(template)
     return joinpath(pkgdir(ITensorPkgSkeleton), "templates", template)
 end
 
+const TEMPLATE_EXT = ".template"
+
+function prepare_template(template_dir)
+    tmp_dir = mktempdir()
+    for (root, dirs, files) in walkdir(template_dir)
+        for dir in dirs
+            mkpath(joinpath(tmp_dir, relpath(joinpath(root, dir), template_dir)))
+        end
+        for file in files
+            src = joinpath(root, file)
+            rel = relpath(src, template_dir)
+            if endswith(rel, TEMPLATE_EXT)
+                rel = rel[1:(end - length(TEMPLATE_EXT))]
+            end
+            cp(src, joinpath(tmp_dir, rel))
+        end
+    end
+    return tmp_dir
+end
+
 function is_git_repo(path)
     return try
         LibGit2.GitRepo(path)
@@ -244,6 +264,8 @@ function generate(
     end
     # Fill in default path if missing.
     templates = set_default_template_path.(templates)
+    # Copy templates to temp directories, stripping `.template` extension from filenames.
+    templates = prepare_template.(templates)
     is_new_repo = !is_git_repo(pkgpath)
     branch_name = default_branch_name()
     user_replacements_pkgskeleton = to_pkgskeleton(user_replacements)

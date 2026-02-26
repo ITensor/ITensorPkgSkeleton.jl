@@ -115,7 +115,9 @@ const TEMPLATE_PATHS = Dict(
     "src" => ["src"],
     "test" => ["test"]
 )
-const TEMPLATE_NAMES = collect(keys(TEMPLATE_PATHS))
+function strip_template_ext(path)
+    return endswith(path, TEMPLATE_EXT) ? path[1:(end - length(TEMPLATE_EXT))] : path
+end
 
 function copy_template_path!(src, template_dir, dest_dir)
     if isdir(src)
@@ -125,20 +127,14 @@ function copy_template_path!(src, template_dir, dest_dir)
             end
             for file in files
                 src_file = joinpath(root, file)
-                rel = relpath(src_file, template_dir)
-                if endswith(rel, TEMPLATE_EXT)
-                    rel = rel[1:(end - length(TEMPLATE_EXT))]
-                end
+                rel = strip_template_ext(relpath(src_file, template_dir))
                 dest_file = joinpath(dest_dir, rel)
                 mkpath(dirname(dest_file))
                 cp(src_file, dest_file)
             end
         end
     elseif isfile(src)
-        rel = relpath(src, template_dir)
-        if endswith(rel, TEMPLATE_EXT)
-            rel = rel[1:(end - length(TEMPLATE_EXT))]
-        end
+        rel = strip_template_ext(relpath(src, template_dir))
         dest_file = joinpath(dest_dir, rel)
         mkpath(dirname(dest_file))
         cp(src, dest_file)
@@ -158,7 +154,9 @@ function prepare_default_templates(templates)
         paths = get(TEMPLATE_PATHS, template, nothing)
         isnothing(paths) &&
             throw(
-            ArgumentError("Unknown template \"$template\". Options: $(TEMPLATE_NAMES)")
+            ArgumentError(
+                "Unknown template \"$template\". Options: $(collect(keys(TEMPLATE_PATHS)))"
+            )
         )
         for path in paths
             src = joinpath(TEMPLATE_ROOT, "$path$TEMPLATE_EXT")
@@ -169,6 +167,17 @@ function prepare_default_templates(templates)
         end
     end
     return tmp_dir
+end
+
+function prepare_templates(templates)
+    templates_abs = filter(isabspath, templates)
+    templates_default = setdiff(templates, templates_abs)
+    prepared = String[]
+    if !isempty(templates_default)
+        push!(prepared, prepare_default_templates(String.(templates_default)))
+    end
+    append!(prepared, prepare_template.(templates_abs))
+    return prepared
 end
 
 function is_git_repo(path)
@@ -185,7 +194,7 @@ $(SIGNATURES)
 
 All available templates when constructing a package. Includes the following templates: `$(all_templates())`
 """
-all_templates() = copy(TEMPLATE_NAMES)
+all_templates() = collect(keys(TEMPLATE_PATHS))
 
 """
 $(SIGNATURES)
@@ -287,13 +296,7 @@ function generate(
     # Process downstream package information.
     user_replacements = format_downstreampkgs(user_replacements)
     templates = setdiff(templates, ignore_templates)
-    templates_abs = filter(isabspath, templates)
-    templates_default = setdiff(templates, templates_abs)
-    if !isempty(templates_default)
-        templates_abs =
-            vcat([prepare_default_templates(String.(templates_default))], templates_abs)
-    end
-    templates = prepare_template.(templates_abs)
+    templates = prepare_templates(templates)
     is_new_repo = !is_git_repo(pkgpath)
     branch_name = default_branch_name()
     user_replacements_pkgskeleton = to_pkgskeleton(user_replacements)

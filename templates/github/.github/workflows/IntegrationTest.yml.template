@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         pkg:
-          - "__none__"
+{DOWNSTREAMPKGS}
     uses: "ITensor/ITensorActions/.github/workflows/IntegrationTest.yml@main"
     with:
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
@@ -36,4 +36,3 @@ jobs:
         run: |
           echo "integration-test.result = ${{ needs.integration-test.result }}"
           test "${{ needs.integration-test.result }}" = "success"
-          

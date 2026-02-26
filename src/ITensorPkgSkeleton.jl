@@ -84,14 +84,6 @@ function default_user_replacements()
     )
 end
 
-# See:
-# https://discourse.julialang.org/t/remove-a-field-from-a-namedtuple/34664
-# https://github.com/JuliaLang/julia/pull/55270
-# https://github.com/JuliaLang/julia/issues/34772
-function delete(nt::NamedTuple{names}, key::Symbol) where {names}
-    return NamedTuple{filter(≠(key), names)}(nt)
-end
-
 #=
 This processes inputs like:
 ```julia
@@ -99,18 +91,12 @@ ITensorPkgSkeleton.generate("NewPkg"; downstreampkgs=["ITensors"])
 ```
 =#
 function format_downstreampkgs(user_replacements)
-    if !haskey(user_replacements, :downstreampkgs)
-        return user_replacements
+    pkgs = haskey(user_replacements, :downstreampkgs) ? user_replacements.downstreampkgs : []
+    if isempty(pkgs)
+        downstreampkgs = "          - \"__none__\""
+    else
+        downstreampkgs = join(["          - \"$(pkg)\"" for pkg in pkgs], "\n")
     end
-    if isempty(user_replacements.downstreampkgs)
-        return delete(user_replacements, :downstreampkgs)
-    end
-    downstreampkgs = ""
-    for pkg in user_replacements.downstreampkgs
-        downstreampkgs *= "           - \'$(pkg)\'\n"
-    end
-    # Remove extraneous trailing newline character.
-    downstreampkgs = chop(downstreampkgs)
     return merge(user_replacements, (; downstreampkgs))
 end
 
@@ -242,7 +228,7 @@ julia> ITensorPkgSkeleton.generate(
   - `path::AbstractString`: Path where the package will be generated. Defaults to the [development directory](https://pkgdocs.julialang.org/v1/api/#Pkg.develop), i.e. `$(default_path())`.
   - `templates`: A list of templates to use. Select a subset of `ITensorPkgSkeleton.all_templates() = $(all_templates())`. Defaults to `ITensorPkgSkeleton.default_templates() = $(default_templates())`.
   - `ignore_templates`: A list of templates to ignore. This is the same as setting `templates=setdiff(templates, ignore_templates)`.    # Process downstream package information.
-  - `downstreampkgs`: Specify the downstream packages that depend on this package. Setting this will create a workflow where the downstream tests will be run alongside the tests for this package in Github Actions to ensure that changes to your package don't break the specified downstream packages. Defaults to an empty list.
+  - `downstreampkgs`: Specify the downstream packages that depend on this package. This populates the `IntegrationTest.yml` matrix in the `github` template. If empty, the workflow defaults to `__none__`.
   - `uuid`: Replaces `{UUID}` in the template. Defaults to the existing UUID in the `Project.toml` if the path points to an existing package, otherwise generates one randomly with `UUIDs.uuid4()`.
   - `year`: Replaces `{YEAR}` in the template. Year the package/repository was created. Defaults to the current year.    # Check if there are downstream tests.
 """
@@ -255,13 +241,6 @@ function generate(
     # Process downstream package information.
     user_replacements = format_downstreampkgs(user_replacements)
     templates = setdiff(templates, ignore_templates)
-    # Check if there are downstream tests.
-    if haskey(user_replacements, :downstreampkgs) &&
-            !isempty(user_replacements.downstreampkgs)
-        templates = [templates; ["downstreampkgs"]]
-    else
-        templates = setdiff(templates, ["downstreampkgs"])
-    end
     # Fill in default path if missing.
     templates = set_default_template_path.(templates)
     # Copy templates to temp directories, stripping `.template` extension from filenames.

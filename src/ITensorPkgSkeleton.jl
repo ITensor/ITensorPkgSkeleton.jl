@@ -101,29 +101,83 @@ function format_downstreampkgs(user_replacements)
     return merge(user_replacements, (; downstreampkgs))
 end
 
-function set_default_template_path(template)
-    isabspath(template) && return template
-    return joinpath(pkgdir(ITensorPkgSkeleton), "templates", template)
+const TEMPLATE_EXT = ".template"
+const TEMPLATE_ROOT = joinpath(pkgdir(ITensorPkgSkeleton), "templates")
+const TEMPLATE_PATHS = Dict(
+    "benchmark" => ["benchmark"],
+    "docs" => ["docs", "README.md"],
+    "examples" => ["examples"],
+    "github" => [".github"],
+    "gitignore" => [".gitignore"],
+    "license" => ["LICENSE"],
+    "precommit" => [".pre-commit-config.yaml"],
+    "project" => ["Project.toml"],
+    "src" => ["src"],
+    "test" => ["test"]
+)
+function strip_template_ext(path)
+    return endswith(path, TEMPLATE_EXT) ? path[1:(end - length(TEMPLATE_EXT))] : path
 end
 
-const TEMPLATE_EXT = ".template"
+function copy_template_path!(src, template_dir, dest_dir)
+    if isdir(src)
+        for (root, dirs, files) in walkdir(src)
+            for dir in dirs
+                mkpath(joinpath(dest_dir, relpath(joinpath(root, dir), template_dir)))
+            end
+            for file in files
+                src_file = joinpath(root, file)
+                rel = strip_template_ext(relpath(src_file, template_dir))
+                dest_file = joinpath(dest_dir, rel)
+                mkpath(dirname(dest_file))
+                cp(src_file, dest_file)
+            end
+        end
+    elseif isfile(src)
+        rel = strip_template_ext(relpath(src, template_dir))
+        dest_file = joinpath(dest_dir, rel)
+        mkpath(dirname(dest_file))
+        cp(src, dest_file)
+    end
+    return nothing
+end
 
 function prepare_template(template_dir)
     tmp_dir = mktempdir()
-    for (root, dirs, files) in walkdir(template_dir)
-        for dir in dirs
-            mkpath(joinpath(tmp_dir, relpath(joinpath(root, dir), template_dir)))
-        end
-        for file in files
-            src = joinpath(root, file)
-            rel = relpath(src, template_dir)
-            if endswith(rel, TEMPLATE_EXT)
-                rel = rel[1:(end - length(TEMPLATE_EXT))]
+    copy_template_path!(template_dir, template_dir, tmp_dir)
+    return tmp_dir
+end
+
+function prepare_default_templates(templates)
+    tmp_dir = mktempdir()
+    for template in templates
+        paths = get(TEMPLATE_PATHS, template, nothing)
+        isnothing(paths) &&
+            throw(
+            ArgumentError(
+                "Unknown template \"$template\". Options: $(collect(keys(TEMPLATE_PATHS)))"
+            )
+        )
+        for path in paths
+            src = joinpath(TEMPLATE_ROOT, "$path$TEMPLATE_EXT")
+            if !isfile(src)
+                src = joinpath(TEMPLATE_ROOT, path)
             end
-            cp(src, joinpath(tmp_dir, rel))
+            copy_template_path!(src, TEMPLATE_ROOT, tmp_dir)
         end
     end
     return tmp_dir
+end
+
+function prepare_templates(templates)
+    templates_abs = filter(isabspath, templates)
+    templates_default = setdiff(templates, templates_abs)
+    prepared = String[]
+    if !isempty(templates_default)
+        push!(prepared, prepare_default_templates(String.(templates_default)))
+    end
+    append!(prepared, prepare_template.(templates_abs))
+    return prepared
 end
 
 function is_git_repo(path)
@@ -140,7 +194,7 @@ $(SIGNATURES)
 
 All available templates when constructing a package. Includes the following templates: `$(all_templates())`
 """
-all_templates() = readdir(joinpath(pkgdir(ITensorPkgSkeleton), "templates"))
+all_templates() = collect(keys(TEMPLATE_PATHS))
 
 """
 $(SIGNATURES)
@@ -242,10 +296,7 @@ function generate(
     # Process downstream package information.
     user_replacements = format_downstreampkgs(user_replacements)
     templates = setdiff(templates, ignore_templates)
-    # Fill in default path if missing.
-    templates = set_default_template_path.(templates)
-    # Copy templates to temp directories, stripping `.template` extension from filenames.
-    templates = prepare_template.(templates)
+    templates = prepare_templates(templates)
     is_new_repo = !is_git_repo(pkgpath)
     branch_name = default_branch_name()
     user_replacements_pkgskeleton = to_pkgskeleton(user_replacements)

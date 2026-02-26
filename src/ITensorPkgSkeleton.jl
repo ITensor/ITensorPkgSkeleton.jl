@@ -103,18 +103,6 @@ end
 
 const TEMPLATE_EXT = ".template"
 const TEMPLATE_ROOT = joinpath(pkgdir(ITensorPkgSkeleton), "templates")
-const TEMPLATE_NAMES = [
-    "benchmark",
-    "docs",
-    "examples",
-    "github",
-    "gitignore",
-    "license",
-    "precommit",
-    "project",
-    "src",
-    "test",
-]
 const TEMPLATE_PATHS = Dict(
     "benchmark" => ["benchmark"],
     "docs" => ["docs", "README.md"],
@@ -127,6 +115,7 @@ const TEMPLATE_PATHS = Dict(
     "src" => ["src"],
     "test" => ["test"]
 )
+const TEMPLATE_NAMES = collect(keys(TEMPLATE_PATHS))
 
 function copy_template_path!(src, template_dir, dest_dir)
     if isdir(src)

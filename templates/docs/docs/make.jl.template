@@ -20,5 +20,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo = "github.com/ITensor/{PKGNAME}.jl", devbranch = "main", push_preview = true
+    repo = "github.com/ITensor/{PKGNAME}.jl", devbranch = "main",
+    push_preview = true
 )

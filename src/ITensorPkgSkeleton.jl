@@ -91,7 +91,8 @@ ITensorPkgSkeleton.generate("NewPkg"; downstreampkgs=["ITensors"])
 ```
 =#
 function format_downstreampkgs(user_replacements)
-    pkgs = haskey(user_replacements, :downstreampkgs) ? user_replacements.downstreampkgs : []
+    pkgs =
+        haskey(user_replacements, :downstreampkgs) ? user_replacements.downstreampkgs : []
     if isempty(pkgs)
         downstreampkgs = "          - \"__none__\""
     else

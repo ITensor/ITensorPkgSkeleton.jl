@@ -10,7 +10,7 @@ using Test: @test, @testset
         "docs" => "docs",
         "examples" => "examples",
         "src" => "src",
-        "test" => "test",
+        "test" => "test"
     )
     @testset "generate" begin
         path = mktempdir()
@@ -20,7 +20,9 @@ using Test: @test, @testset
         for (dir, _) in pkgdirs
             @test isdir(joinpath(path, "NewPkg", dir))
         end
-        @test isfile(joinpath(path, "NewPkg", ".github", "workflows", "IntegrationTest.yml"))
+        @test isfile(
+            joinpath(path, "NewPkg", ".github", "workflows", "IntegrationTest.yml")
+        )
         @test open(
             joinpath(path, "NewPkg", ".github", "workflows", "IntegrationTest.yml"),
             "r"
@@ -34,16 +36,21 @@ using Test: @test, @testset
                 path = mktempdir()
                 ITensorPkgSkeleton.generate("NewPkg"; path, templates, downstreampkgs)
                 enabled_templates = Set{String}(String.(templates))
-                has_github_template = templates == ITensorPkgSkeleton.default_templates() ||
+                has_github_template =
+                    templates == ITensorPkgSkeleton.default_templates() ||
                     "github" in templates
                 @test isdir(joinpath(path, "NewPkg"))
                 if has_github_template
                     @test isdir(joinpath(path, "NewPkg", ".github", "workflows"))
                     @test isfile(
-                        joinpath(path, "NewPkg", ".github", "workflows", "IntegrationTest.yml")
+                        joinpath(
+                            path, "NewPkg", ".github", "workflows", "IntegrationTest.yml"
+                        )
                     )
                     @test open(
-                        joinpath(path, "NewPkg", ".github", "workflows", "IntegrationTest.yml"),
+                        joinpath(
+                            path, "NewPkg", ".github", "workflows", "IntegrationTest.yml"
+                        ),
                         "r"
                     ) do io
                         return contains(read(io, String), "- \"DownstreamPkg\"")
@@ -52,7 +59,8 @@ using Test: @test, @testset
                     @test !isdir(joinpath(path, "NewPkg", ".github"))
                 end
                 for (dir, template_name) in pkgdirs
-                    expected = templates == ITensorPkgSkeleton.default_templates() ||
+                    expected =
+                        templates == ITensorPkgSkeleton.default_templates() ||
                         template_name in enabled_templates
                     @test isdir(joinpath(path, "NewPkg", dir)) == expected
                 end

@@ -36,3 +36,4 @@ jobs:
         run: |
           echo "integration-test.result = ${{ needs.integration-test.result }}"
           test "${{ needs.integration-test.result }}" = "success"
+          

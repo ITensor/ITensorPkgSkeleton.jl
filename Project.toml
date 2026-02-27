@@ -1,6 +1,6 @@
 name = "ITensorPkgSkeleton"
 uuid = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
-version = "0.3.33"
+version = "0.3.34"
 authors = ["ITensor developers <support@itensor.org> and contributors"]
 
 [workspace]

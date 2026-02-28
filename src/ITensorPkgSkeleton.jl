@@ -102,7 +102,7 @@ function format_downstreampkgs(user_replacements)
 end
 
 const TEMPLATE_EXT = ".template"
-const TEMPLATE_ROOT = joinpath(pkgdir(ITensorPkgSkeleton), "templates")
+const TEMPLATE_ROOT = joinpath(pkgdir(ITensorPkgSkeleton), "template")
 const TEMPLATE_PATHS = Dict(
     "benchmark" => ["benchmark"],
     "docs" => ["docs", "README.md"],

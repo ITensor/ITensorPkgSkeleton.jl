@@ -6,7 +6,7 @@ module ITensorPkgSkeleton
 if VERSION >= v"1.11.0-DEV.469"
     eval(
         Meta.parse(
-            "public all_templates, default_templates, make_index!, make_readme!, generate"
+            "public all_templates, default_templates, generate, make_index!, make_readme!, runtests"
         )
     )
 end
@@ -18,6 +18,7 @@ using LibGit2: LibGit2
 using Literate: Literate
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
+using SafeTestsets: @safetestset
 using Suppressor: @suppress
 
 # Configure `Git.jl`/`Git_jll.jl` to
@@ -182,6 +183,71 @@ function make_index!(
         postprocess = gfm_alerts ∘ _ccq_logo_index
     )
     Literate.markdown(inputfile, outputdir; flavor, name, postprocess)
+    return nothing
+end
+
+function _istestfile(path::AbstractString)
+    fn = basename(path)
+    return endswith(fn, ".jl") && startswith(basename(fn), "test_") &&
+        !contains(fn, "setup")
+end
+
+function _isexamplefile(path::AbstractString)
+    fn = basename(path)
+    return endswith(fn, ".jl") && !endswith(fn, "_notest.jl") && !contains(fn, "setup")
+end
+
+function _group(; args = ARGS, env = ENV)
+    pat = r"(?:--group=)(\w+)"
+    arg_id = findfirst(contains(pat), args)
+    return uppercase(
+        if isnothing(arg_id)
+            arg = get(env, "GROUP", "ALL")
+            arg == "" ? "ALL" : arg
+        else
+            only(match(pat, args[arg_id]).captures)
+        end
+    )
+end
+
+function runtests(;
+        testdir = @__DIR__,
+        runtests_file = "runtests.jl",
+        args = ARGS,
+        env = ENV
+    )
+    group = _group(; args, env)
+    @time begin
+        for testgroup in filter(isdir, readdir(testdir; join = true))
+            if group == "ALL" || group == uppercase(basename(testgroup))
+                for filename in filter(_istestfile, readdir(testgroup; join = true))
+                    @eval @safetestset $(basename(filename)) begin
+                        include($filename)
+                    end
+                end
+            end
+        end
+
+        for file in filter(_istestfile, readdir(testdir; join = true))
+            (basename(file) == basename(runtests_file)) && continue
+            @eval @safetestset $(basename(file)) begin
+                include($file)
+            end
+        end
+
+        examplepath = joinpath(testdir, "..", "examples")
+        if isdir(examplepath)
+            for (root, _, files) in walkdir(examplepath)
+                contains(chopprefix(root, testdir), "setup") && continue
+                for file in filter(_isexamplefile, files)
+                    filename = joinpath(root, file)
+                    @eval @safetestset $file begin
+                        @suppress include($filename)
+                    end
+                end
+            end
+        end
+    end
     return nothing
 end
 

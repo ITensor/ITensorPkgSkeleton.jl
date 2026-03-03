@@ -146,6 +146,17 @@ function _run_isolated_testfile(
     )
 end
 
+"""
+    runtests(; testdir::AbstractString, args = ARGS, env = ENV)
+
+Discover and run test files named `test_*.jl` under `testdir` as isolated testsets.
+
+Subdirectories of `testdir` are treated as test groups and can be filtered with
+`--group=...` or `ENV["GROUP"]`.
+
+Files with `"setup"` in the name are skipped.
+Files ending with `_notest.jl` in the `examples/` directory are also skipped.
+"""
 function runtests(; testdir::AbstractString, args = ARGS, env = ENV)
     group = _group(; args, env)
     @time begin

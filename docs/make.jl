@@ -6,7 +6,7 @@ DocMeta.setdocmeta!(
     ITensorPkgSkeleton, :DocTestSetup, :(using ITensorPkgSkeleton); recursive = true
 )
 
-ITensorFormatter.make_index!(ITensorPkgSkeleton)
+ITensorFormatter.make_index!(pkgdir(ITensorPkgSkeleton))
 
 makedocs(;
     modules = [ITensorPkgSkeleton],

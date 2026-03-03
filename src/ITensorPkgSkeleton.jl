@@ -6,7 +6,7 @@ module ITensorPkgSkeleton
 if VERSION >= v"1.11.0-DEV.469"
     eval(
         Meta.parse(
-            "public all_templates, default_templates, generate"
+            "public all_templates, default_templates, generate, runtests"
         )
     )
 end
@@ -18,6 +18,7 @@ using LibGit2: LibGit2
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
 using Suppressor: @suppress
+using Test: @testset
 
 # Configure `Git.jl`/`Git_jll.jl` to
 # use the local installation of git.
@@ -103,6 +104,76 @@ function format_downstreampkgs(user_replacements)
         downstreampkgs = join(["          - \"$(pkg)\"" for pkg in pkgs], "\n")
     end
     return merge(user_replacements, (; downstreampkgs))
+end
+
+function _istestfile(path::AbstractString)
+    fn = basename(path)
+    return endswith(fn, ".jl") && startswith(basename(fn), "test_") &&
+        !contains(fn, "setup")
+end
+
+function _isexamplefile(path::AbstractString)
+    fn = basename(path)
+    return endswith(fn, ".jl") && !endswith(fn, "_notest.jl") && !contains(fn, "setup")
+end
+
+function _group(; args = ARGS, env = ENV)
+    pat = r"(?:--group=)(\w+)"
+    arg_id = findfirst(contains(pat), args)
+    return uppercase(
+        if isnothing(arg_id)
+            arg = get(env, "GROUP", "ALL")
+            arg == "" ? "ALL" : arg
+        else
+            only(match(pat, args[arg_id]).captures)
+        end
+    )
+end
+
+function _include_in_fresh_module(path::AbstractString)
+    mod = Module(gensym(:SafeTestset))
+    Core.eval(mod, :(using Test))
+    return Base.include(mod, path)
+end
+
+function runtests(; testdir::AbstractString, args = ARGS, env = ENV)
+    group = _group(; args, env)
+    @time begin
+        for testgroup in filter(isdir, readdir(testdir; join = true))
+            if group == "ALL" || group == uppercase(basename(testgroup))
+                for filename in filter(_istestfile, readdir(testgroup; join = true))
+                    @testset "$(basename(filename))" begin
+                        _include_in_fresh_module(filename)
+                    end
+                end
+            end
+        end
+
+        for file in filter(_istestfile, readdir(testdir; join = true))
+            (basename(file) == "runtests.jl") && continue
+            @testset "$(basename(file))" begin
+                _include_in_fresh_module(file)
+            end
+        end
+
+        examplepath = joinpath(testdir, "..", "examples")
+        if isdir(examplepath)
+            for (root, _, files) in walkdir(examplepath)
+                contains(chopprefix(root, testdir), "setup") && continue
+                for file in filter(_isexamplefile, files)
+                    filename = joinpath(root, file)
+                    @testset "$file" begin
+                        redirect_stdout(devnull) do
+                            redirect_stderr(devnull) do
+                                return _include_in_fresh_module(filename)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return nothing
 end
 
 const TEMPLATE_EXT = ".template"

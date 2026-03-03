@@ -6,7 +6,7 @@ DocMeta.setdocmeta!(
     {PKGNAME}, :DocTestSetup, :(using {PKGNAME}); recursive = true
 )
 
-ITensorFormatter.make_index!({PKGNAME})
+ITensorFormatter.make_index!(pkgdir({PKGNAME}))
 
 makedocs(;
     modules = [{PKGNAME}],

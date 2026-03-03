@@ -4,9 +4,6 @@ Git_jll = "f8c6e375-362e-5223-8a59-34ff63f689eb"
 ITensorFormatter = "b6bf39f1-c9d3-4bad-aad8-593d802f65fd"
 ITensorPkgSkeleton = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
 
-[sources.ITensorFormatter]
-url = "https://github.com/ITensor/ITensorFormatter.jl"
-
 [sources.ITensorPkgSkeleton]
 path = ".."
 

@@ -3,9 +3,8 @@ Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 ITensorFormatter = "b6bf39f1-c9d3-4bad-aad8-593d802f65fd"
 {PKGNAME} = "{UUID}"
 
-[sources]
-ITensorFormatter = {url = "https://github.com/ITensor/ITensorFormatter.jl"}
-{PKGNAME} = {path = ".."}
+[sources.{PKGNAME}]
+path = ".."
 
 [compat]
 Documenter = "1"

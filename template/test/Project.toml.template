@@ -4,9 +4,11 @@ ITensorPkgSkeleton = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
 {PKGNAME} = "{UUID}"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
-[sources]
-ITensorPkgSkeleton = {url = "https://github.com/ITensor/ITensorPkgSkeleton.jl"}
-{PKGNAME} = {path = ".."}
+[sources.ITensorPkgSkeleton]
+url = "https://github.com/ITensor/ITensorPkgSkeleton.jl"
+
+[sources.{PKGNAME}]
+path = ".."
 
 [compat]
 Aqua = "0.8.9"

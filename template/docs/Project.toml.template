@@ -1,15 +1,13 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-ITensorPkgSkeleton = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
+ITensorFormatter = "b6bf39f1-c9d3-4bad-aad8-593d802f65fd"
 {PKGNAME} = "{UUID}"
-Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
 
 [sources]
-ITensorPkgSkeleton = {url = "https://github.com/ITensor/ITensorPkgSkeleton.jl"}
+ITensorFormatter = {url = "https://github.com/ITensor/ITensorFormatter.jl"}
 {PKGNAME} = {path = ".."}
 
 [compat]
 Documenter = "1"
-ITensorPkgSkeleton = "0.3"
+ITensorFormatter = "0.2"
 {PKGNAME} = "0.1"
-Literate = "2"

@@ -1,12 +1,12 @@
 using Documenter: Documenter, DocMeta, deploydocs, makedocs
-using ITensorPkgSkeleton: ITensorPkgSkeleton
+using ITensorFormatter: ITensorFormatter
 using {PKGNAME}: {PKGNAME}
 
 DocMeta.setdocmeta!(
     {PKGNAME}, :DocTestSetup, :(using {PKGNAME}); recursive = true
 )
 
-ITensorPkgSkeleton.make_index!({PKGNAME})
+ITensorFormatter.make_index!({PKGNAME})
 
 makedocs(;
     modules = [{PKGNAME}],

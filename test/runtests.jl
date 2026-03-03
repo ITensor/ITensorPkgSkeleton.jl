@@ -1,8 +1,7 @@
-using ITensorPkgSkeleton: ITensorPkgSkeleton
+using ITensorFormatter: ITensorFormatter
 
-ITensorPkgSkeleton.runtests(;
+ITensorFormatter.runtests(;
     testdir = @__DIR__,
-    runtests_file = @__FILE__,
     args = ARGS,
     env = ENV
 )

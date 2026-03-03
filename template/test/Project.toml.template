@@ -1,15 +1,15 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
-ITensorPkgSkeleton = "3d388ab1-018a-49f4-ae50-18094d5f71ea"
+ITensorFormatter = "b6bf39f1-c9d3-4bad-aad8-593d802f65fd"
 {PKGNAME} = "{UUID}"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [sources]
-ITensorPkgSkeleton = {url = "https://github.com/ITensor/ITensorPkgSkeleton.jl"}
+ITensorFormatter = {url = "https://github.com/ITensor/ITensorFormatter.jl"}
 {PKGNAME} = {path = ".."}
 
 [compat]
 Aqua = "0.8.9"
-ITensorPkgSkeleton = "0.3"
+ITensorFormatter = "0.2"
 {PKGNAME} = "0.1"
 Test = "1.10"

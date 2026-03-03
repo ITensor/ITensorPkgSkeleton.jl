@@ -4,13 +4,18 @@ module ITensorPkgSkeleton
 # backwards-compatible way.
 # See: https://discourse.julialang.org/t/is-compat-jl-worth-it-for-the-public-keyword/119041
 if VERSION >= v"1.11.0-DEV.469"
-    eval(Meta.parse("public all_templates, default_templates, generate"))
+    eval(
+        Meta.parse(
+            "public all_templates, default_templates, make_index!, make_readme!, generate"
+        )
+    )
 end
 
 using DocStringExtensions: SIGNATURES
 using Git: git
 using Git_jll: Git_jll
 using LibGit2: LibGit2
+using Literate: Literate
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
 using Suppressor: @suppress
@@ -99,6 +104,85 @@ function format_downstreampkgs(user_replacements)
         downstreampkgs = join(["          - \"$(pkg)\"" for pkg in pkgs], "\n")
     end
     return merge(user_replacements, (; downstreampkgs))
+end
+
+_pkgroot(pkg::Module) = pkgdir(pkg)
+_pkgroot(pkg::AbstractString) = pkg
+
+const GFM_ALERT_HEADER_MAP = Dict(
+    "> [!CAUTION]" => "!!! danger",
+    "> [!IMPORTANT]" => "!!! important",
+    "> [!NOTE]" => "!!! note",
+    "> [!TIP]" => "!!! tip",
+    "> [!WARNING]" => "!!! warning"
+)
+
+function gfm_alerts(content::AbstractString)
+    lines = split(content, '\n')
+    output = String[]
+    in_alert = false
+    for line in lines
+        if haskey(GFM_ALERT_HEADER_MAP, line)
+            push!(output, GFM_ALERT_HEADER_MAP[line])
+            in_alert = true
+        elseif in_alert && startswith(line, ">")
+            if line == ">"
+                push!(output, "")
+            elseif startswith(line, "> ")
+                push!(output, "    " * line[3:end])
+            else
+                push!(output, line)
+            end
+        else
+            in_alert = false
+            push!(output, line)
+        end
+    end
+    return join(output, '\n')
+end
+
+function _ccq_logo_readme(content::AbstractString)
+    include_ccq_logo = """
+    <picture>
+      <source media="(prefers-color-scheme: dark)" width="20%" srcset="docs/src/assets/CCQ-dark.png">
+      <img alt="Flatiron Center for Computational Quantum Physics logo." width="20%" src="docs/src/assets/CCQ.png">
+    </picture>
+    """
+    return replace(content, "{CCQ_LOGO}" => include_ccq_logo)
+end
+
+function _ccq_logo_index(content::AbstractString)
+    include_ccq_logo = """
+    ```@raw html
+    <img class="display-light-only" src="assets/CCQ.png" width="20%" alt="Flatiron Center for Computational Quantum Physics logo."/>
+    <img class="display-dark-only" src="assets/CCQ-dark.png" width="20%" alt="Flatiron Center for Computational Quantum Physics logo."/>
+    ```
+    """
+    return replace(content, "{CCQ_LOGO}" => include_ccq_logo)
+end
+
+function make_readme!(
+        pkg::Union{Module, AbstractString};
+        inputfile = joinpath(_pkgroot(pkg), "examples", "README.jl"),
+        outputdir = _pkgroot(pkg),
+        flavor = Literate.CommonMarkFlavor(),
+        name = "README",
+        postprocess = _ccq_logo_readme
+    )
+    Literate.markdown(inputfile, outputdir; flavor, name, postprocess)
+    return nothing
+end
+
+function make_index!(
+        pkg::Union{Module, AbstractString};
+        inputfile = joinpath(_pkgroot(pkg), "examples", "README.jl"),
+        outputdir = joinpath(_pkgroot(pkg), "docs", "src"),
+        flavor = Literate.DocumenterFlavor(),
+        name = "index",
+        postprocess = gfm_alerts ∘ _ccq_logo_index
+    )
+    Literate.markdown(inputfile, outputdir; flavor, name, postprocess)
+    return nothing
 end
 
 const TEMPLATE_EXT = ".template"

@@ -4,7 +4,11 @@ module ITensorPkgSkeleton
 # backwards-compatible way.
 # See: https://discourse.julialang.org/t/is-compat-jl-worth-it-for-the-public-keyword/119041
 if VERSION >= v"1.11.0-DEV.469"
-    eval(Meta.parse("public all_templates, default_templates, generate"))
+    eval(
+        Meta.parse(
+            "public all_templates, default_templates, generate, runtests"
+        )
+    )
 end
 
 using DocStringExtensions: SIGNATURES
@@ -14,6 +18,7 @@ using LibGit2: LibGit2
 using PkgSkeleton: PkgSkeleton
 using Preferences: Preferences
 using Suppressor: @suppress
+using Test: @testset
 
 # Configure `Git.jl`/`Git_jll.jl` to
 # use the local installation of git.
@@ -99,6 +104,91 @@ function format_downstreampkgs(user_replacements)
         downstreampkgs = join(["          - \"$(pkg)\"" for pkg in pkgs], "\n")
     end
     return merge(user_replacements, (; downstreampkgs))
+end
+
+function _istestfile(path::AbstractString)
+    fn = basename(path)
+    return endswith(fn, ".jl") && startswith(basename(fn), "test_") &&
+        !contains(fn, "setup")
+end
+
+function _isexamplefile(path::AbstractString)
+    fn = basename(path)
+    return endswith(fn, ".jl") && !endswith(fn, "_notest.jl") && !contains(fn, "setup")
+end
+
+function _group(; args = ARGS, env = ENV)
+    pat = r"(?:--group=)(\w+)"
+    arg_id = findfirst(contains(pat), args)
+    return uppercase(
+        if isnothing(arg_id)
+            arg = get(env, "GROUP", "ALL")
+            arg == "" ? "ALL" : arg
+        else
+            only(match(pat, args[arg_id]).captures)
+        end
+    )
+end
+
+function _run_isolated_testfile(
+        path::AbstractString;
+        label::AbstractString = basename(path)
+    )
+    mod = Module(gensym(:SafeTestset))
+    Core.eval(mod, :(using Test))
+    return Core.eval(
+        mod,
+        quote
+            @testset $label begin
+                Base.include($mod, $path)
+            end
+        end
+    )
+end
+
+"""
+    runtests(; testdir::AbstractString, args = ARGS, env = ENV)
+
+Discover and run test files named `test_*.jl` under `testdir` as isolated testsets.
+
+Subdirectories of `testdir` are treated as test groups and can be filtered with
+`--group=...` or `ENV["GROUP"]`.
+
+Files with `"setup"` in the name are skipped.
+Files ending with `_notest.jl` in the `examples/` directory are also skipped.
+"""
+function runtests(; testdir::AbstractString, args = ARGS, env = ENV)
+    group = _group(; args, env)
+    @time begin
+        for testgroup in filter(isdir, readdir(testdir; join = true))
+            if group == "ALL" || group == uppercase(basename(testgroup))
+                for filename in filter(_istestfile, readdir(testgroup; join = true))
+                    _run_isolated_testfile(filename; label = basename(filename))
+                end
+            end
+        end
+
+        for file in filter(_istestfile, readdir(testdir; join = true))
+            (basename(file) == "runtests.jl") && continue
+            _run_isolated_testfile(file; label = basename(file))
+        end
+
+        examplepath = joinpath(testdir, "..", "examples")
+        if isdir(examplepath)
+            for (root, _, files) in walkdir(examplepath)
+                contains(chopprefix(root, testdir), "setup") && continue
+                for file in filter(_isexamplefile, files)
+                    filename = joinpath(root, file)
+                    redirect_stdout(devnull) do
+                        redirect_stderr(devnull) do
+                            return _run_isolated_testfile(filename; label = file)
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return nothing
 end
 
 const TEMPLATE_EXT = ".template"

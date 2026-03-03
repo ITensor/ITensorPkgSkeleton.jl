@@ -5,7 +5,7 @@ DocMeta.setdocmeta!(
     ITensorPkgSkeleton, :DocTestSetup, :(using ITensorPkgSkeleton); recursive = true
 )
 
-include("make_index.jl")
+ITensorPkgSkeleton.make_index!(ITensorPkgSkeleton)
 
 makedocs(;
     modules = [ITensorPkgSkeleton],

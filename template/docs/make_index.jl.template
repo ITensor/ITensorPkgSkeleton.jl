@@ -1,4 +1,0 @@
-using ITensorPkgSkeleton: ITensorPkgSkeleton
-using {PKGNAME}: {PKGNAME}
-
-ITensorPkgSkeleton.make_index!({PKGNAME})

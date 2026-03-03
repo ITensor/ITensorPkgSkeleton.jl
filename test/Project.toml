@@ -8,5 +8,5 @@ path = ".."
 
 [compat]
 Aqua = "0.8.9"
-ITensorPkgSkeleton = "0.3"
+ITensorPkgSkeleton = "0.3.40"
 Test = "1.10"

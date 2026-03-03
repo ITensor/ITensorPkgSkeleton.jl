@@ -130,10 +130,20 @@ function _group(; args = ARGS, env = ENV)
     )
 end
 
-function _include_in_fresh_module(path::AbstractString)
+function _run_isolated_testfile(
+        path::AbstractString;
+        label::AbstractString = basename(path)
+    )
     mod = Module(gensym(:SafeTestset))
     Core.eval(mod, :(using Test))
-    return Base.include(mod, path)
+    return Core.eval(
+        mod,
+        quote
+            @testset $label begin
+                Base.include($mod, $path)
+            end
+        end
+    )
 end
 
 function runtests(; testdir::AbstractString, args = ARGS, env = ENV)
@@ -142,18 +152,14 @@ function runtests(; testdir::AbstractString, args = ARGS, env = ENV)
         for testgroup in filter(isdir, readdir(testdir; join = true))
             if group == "ALL" || group == uppercase(basename(testgroup))
                 for filename in filter(_istestfile, readdir(testgroup; join = true))
-                    @testset "$(basename(filename))" begin
-                        _include_in_fresh_module(filename)
-                    end
+                    _run_isolated_testfile(filename; label = basename(filename))
                 end
             end
         end
 
         for file in filter(_istestfile, readdir(testdir; join = true))
             (basename(file) == "runtests.jl") && continue
-            @testset "$(basename(file))" begin
-                _include_in_fresh_module(file)
-            end
+            _run_isolated_testfile(file; label = basename(file))
         end
 
         examplepath = joinpath(testdir, "..", "examples")
@@ -162,11 +168,9 @@ function runtests(; testdir::AbstractString, args = ARGS, env = ENV)
                 contains(chopprefix(root, testdir), "setup") && continue
                 for file in filter(_isexamplefile, files)
                     filename = joinpath(root, file)
-                    @testset "$file" begin
-                        redirect_stdout(devnull) do
-                            redirect_stderr(devnull) do
-                                return _include_in_fresh_module(filename)
-                            end
+                    redirect_stdout(devnull) do
+                        redirect_stderr(devnull) do
+                            return _run_isolated_testfile(filename; label = file)
                         end
                     end
                 end

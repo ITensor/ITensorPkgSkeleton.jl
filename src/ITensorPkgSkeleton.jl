@@ -136,11 +136,14 @@ function _run_isolated_testfile(
     )
     mod = Module(gensym(:SafeTestset))
     Core.eval(mod, :(using Test))
+    # Module(...) does not define one-argument include(path), so nested includes in
+    # test files would fail without adding this method.
+    Core.eval(mod, :(include(path) = Base.include($mod, path)))
     return Core.eval(
         mod,
         quote
             @testset $label begin
-                Base.include($mod, $path)
+                include($path)
             end
         end
     )

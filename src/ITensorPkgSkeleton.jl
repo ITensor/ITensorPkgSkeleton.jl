@@ -183,9 +183,7 @@ function runtests(; testdir::AbstractString, args = ARGS, env = ENV)
                 for file in filter(_isexamplefile, files)
                     filename = joinpath(root, file)
                     redirect_stdout(devnull) do
-                        redirect_stderr(devnull) do
-                            return _run_isolated_testfile(filename; label = file)
-                        end
+                        return _run_isolated_testfile(filename; label = file)
                     end
                 end
             end

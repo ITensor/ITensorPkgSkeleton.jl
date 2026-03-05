@@ -182,10 +182,16 @@ function runtests(; testdir::AbstractString, args = ARGS, env = ENV)
                 contains(chopprefix(root, testdir), "setup") && continue
                 for file in filter(_isexamplefile, files)
                     filename = joinpath(root, file)
-                    redirect_stdout(devnull) do
-                        redirect_stderr(devnull) do
-                            return _run_isolated_testfile(filename; label = file)
+                    buf = IOBuffer()
+                    try
+                        redirect_stdout(buf) do
+                            redirect_stderr(buf) do
+                                return _run_isolated_testfile(filename; label = file)
+                            end
                         end
+                    catch
+                        print(stderr, String(take!(buf)))
+                        rethrow()
                     end
                 end
             end

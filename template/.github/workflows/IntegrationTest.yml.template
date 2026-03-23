@@ -6,7 +6,7 @@ on:
     tags: "*"
     paths:
       - "Project.toml"
-  pull_request:
+  pull_request_target:
     types:
       - "opened"
       - "synchronize"
@@ -19,10 +19,12 @@ jobs:
   integration-test:
     name: "IntegrationTest"
     strategy:
+      fail-fast: false
       matrix:
         pkg:
 {DOWNSTREAMPKGS}
     uses: "ITensor/ITensorActions/.github/workflows/IntegrationTest.yml@main"
+    secrets: "inherit"
     with:
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
       pkg: "${{ matrix.pkg }}"

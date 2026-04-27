@@ -46,3 +46,23 @@ julia> Pkg.add("ITensorPkgSkeleton")
 using ITensorPkgSkeleton: ITensorPkgSkeleton
 ITensorPkgSkeleton.generate("MyPackage")
 # Examples go here.
+
+# ## Workflow templates
+#
+# The `template/.github/workflows/` directory is the source of truth for the GitHub Actions
+# workflows shared across the ITensor ecosystem (`Tests.yml`, `FormatCheck.yml`, `TagBot.yml`,
+# `CompatHelper.yml`, etc.). Most of them simply call into reusable workflows in
+# [ITensorActions](https://github.com/ITensor/ITensorActions); see that repository's README
+# for details on each.
+#
+# `TagBot.yml` carries a marker `env: REGISTRY_TAGBOT_ACTION: "JuliaRegistries/TagBot"`
+# that looks unused but is required: the General registry's trigger workflow only treats
+# TagBot as enabled when the literal string `JuliaRegistries/TagBot` appears in a file
+# under `.github/workflows/`, and the reusable-workflow caller would otherwise not
+# contain it. The same string would work as a YAML comment, but
+# [ITensorFormatter](https://github.com/ITensor/ITensorFormatter.jl) (`itpkgfmt`) strips
+# YAML comments via [YAML.jl](https://github.com/JuliaData/YAML.jl)'s writer (tracked
+# upstream at [YAML.jl#245](https://github.com/JuliaData/YAML.jl/issues/245)), so the
+# marker has to live in a structural element. See
+# [ITensorActions's TagBot docs](https://github.com/ITensor/ITensorActions#why-the-env-marker)
+# for the full explanation. Do not remove this `env:` block.

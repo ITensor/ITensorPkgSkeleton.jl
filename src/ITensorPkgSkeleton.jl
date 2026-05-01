@@ -99,9 +99,9 @@ function format_downstreampkgs(user_replacements)
     pkgs =
         haskey(user_replacements, :downstreampkgs) ? user_replacements.downstreampkgs : []
     if isempty(pkgs)
-        downstreampkgs = "          - \"__none__\""
+        downstreampkgs = "      \"__none__\""
     else
-        downstreampkgs = join(["          - \"$(pkg)\"" for pkg in pkgs], "\n")
+        downstreampkgs = join(["      \"$(pkg)\"" for pkg in pkgs], ",\n")
     end
     return merge(user_replacements, (; downstreampkgs))
 end

@@ -27,7 +27,9 @@ using Test: @test, @testset
             joinpath(path, "NewPkg", ".github", "workflows", "IntegrationTest.yml"),
             "r"
         ) do io
-            return contains(read(io, String), "- \"__none__\"")
+            content = read(io, String)
+            return contains(content, "pkgs: |") ==
+                true && contains(content, "\"__none__\"")
         end
     end
     @testset "generate with downstream tests" begin
@@ -53,7 +55,9 @@ using Test: @test, @testset
                         ),
                         "r"
                     ) do io
-                        return contains(read(io, String), "- \"DownstreamPkg\"")
+                        content = read(io, String)
+                        return contains(content, "pkgs: |") ==
+                            true && contains(content, "\"DownstreamPkg\"")
                     end
                 else
                     @test !isdir(joinpath(path, "NewPkg", ".github"))

@@ -18,7 +18,4 @@ jobs:
     secrets: "inherit"
     with:
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
-      pkgs: |
-        [
-        {DOWNSTREAMPKGS}
-        ]
+      pkgs: |{DOWNSTREAMPKGS}

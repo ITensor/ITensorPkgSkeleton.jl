@@ -28,8 +28,8 @@ using Test: @test, @testset
             "r"
         ) do io
             content = read(io, String)
-            return contains(content, "pkgs: |") ==
-                true && contains(content, "\"__none__\"")
+            return contains(content, "pkgs: |") == true &&
+                !contains(content, "\"__none__\"")
         end
     end
     @testset "generate with downstream tests" begin

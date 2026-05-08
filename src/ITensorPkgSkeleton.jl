@@ -99,9 +99,10 @@ function format_downstreampkgs(user_replacements)
     pkgs =
         haskey(user_replacements, :downstreampkgs) ? user_replacements.downstreampkgs : []
     if isempty(pkgs)
-        downstreampkgs = ""
+        downstreampkgs = "        []"
     else
-        downstreampkgs = join(["      \"$(pkg)\"" for pkg in pkgs], ",\n")
+        entries = join(["          \"$(pkg)\"" for pkg in pkgs], ",\n")
+        downstreampkgs = "        [\n$entries\n        ]"
     end
     return merge(user_replacements, (; downstreampkgs))
 end
